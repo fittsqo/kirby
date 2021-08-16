@@ -6,16 +6,15 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
-import java.util.Map;
+import java.util.Objects;
 
 public class JoinListener extends ListenerAdapter {
 
-    String imagePath = "src/main/resources/images/discord_blank2.jpg";
+    String imagePath = "src/main/resources/images/discord_blank_0.jpg";
 
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
@@ -49,7 +48,7 @@ public class JoinListener extends ListenerAdapter {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", baos);
             byte[] bytes = baos.toByteArray();
-            event.getGuild().getDefaultChannel().sendMessage("hi <@" + event.getUser().getId() + "> <3 welcome to yurahcomfy" +
+            Objects.requireNonNull(event.getGuild().getDefaultChannel()).sendMessage("hi <@" + event.getUser().getId() + "> <3 welcome to yurahcomfy" +
                     " \u02DA \u0F18 \u2661 \u22C6\uFF61\u02DA\u2740").addFile(bytes, "welcome_" + event.getUser().getName() + ".jpg").queue();
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
