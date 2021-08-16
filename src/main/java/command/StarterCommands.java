@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.internal.JDAImpl;
 
+import java.util.Objects;
+
 public class StarterCommands extends ListenerAdapter {
 
     public void onMessageReceived(MessageReceivedEvent event)
@@ -22,7 +24,7 @@ public class StarterCommands extends ListenerAdapter {
             MessageChannel channel = event.getChannel();
             channel.sendMessage("Pong!").queue();
         } else if (content.equals("!simwelcome")) {
-            ((JDAImpl)jda).handleEvent(new GuildMemberJoinEvent(event.getJDA(), jda.getResponseTotal(), event.getMember()));
+            ((JDAImpl)jda).handleEvent(new GuildMemberJoinEvent(event.getJDA(), jda.getResponseTotal(), Objects.requireNonNull(event.getMember())));
         }
     }
 }

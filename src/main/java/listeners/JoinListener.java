@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public class JoinListener extends ListenerAdapter {
 
-    String imagePath = "src/main/resources/images/discord_blank_0.jpg";
+    String imagePath = "src/main/resources/images/welcome_blank_0.jpg";
 
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
