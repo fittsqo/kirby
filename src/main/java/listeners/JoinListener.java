@@ -56,9 +56,16 @@ public class JoinListener extends ListenerAdapter {
     }
 
     public void drawCenteredString(Graphics g2d, String text, int backgroundWidth, int textHeight, Font font) {
-        FontMetrics metrics = g2d.getFontMetrics(font);
+        int metricsWidth = g2d.getFontMetrics(font).stringWidth(text);
+        int fontSize = font.getSize();
         g2d.setFont(font);
-        int x = (backgroundWidth - metrics.stringWidth(text)) / 2;
+        while (metricsWidth > backgroundWidth - 80) { // i arbitrarily decided 40px on each side is nice
+            fontSize -= 5;
+            font = new Font(font.getFontName(), font.getStyle(), fontSize);
+            g2d.setFont(font);
+            metricsWidth = g2d.getFontMetrics(font).stringWidth(text);
+        }
+        int x = (backgroundWidth - metricsWidth) / 2;
         g2d.drawString(text, x, textHeight);
     }
 
