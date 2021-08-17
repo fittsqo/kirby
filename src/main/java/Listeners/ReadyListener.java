@@ -16,7 +16,7 @@ public class ReadyListener extends ListenerAdapter {
         jda.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
         jda.setBulkDeleteSplittingEnabled(false);
         jda.setActivity(Activity.listening("daddy hasan"));
-        jda.addEventListeners(new JoinListener(), new ReactionListener(), new StarterCommands(), new GuildJoinListener());
+        jda.addEventListeners(new MemberJoinListener(), new ReactionListener(), new StarterCommands(), new GuildJoinListener());
         jda.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGE_REACTIONS);
 
         jda.build();
