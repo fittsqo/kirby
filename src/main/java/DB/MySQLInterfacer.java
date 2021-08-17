@@ -7,7 +7,7 @@ public class MySQLInterfacer {
     public static String[] getWelcomeInfo(String guildId) {
         String[] result = new String[3];
 
-        String url = "jdbc:mysql://localhost:3306/whatevuh";
+        String url = "jdbc:mysql://localhost:3306/kirbybase";
         String username = "java";
         String password = "password";
 
@@ -28,7 +28,7 @@ public class MySQLInterfacer {
     }
 
     public static void setWelcomeChannel(String guildId, String channelId) {
-        String url = "jdbc:mysql://localhost:3306/whatevuh";
+        String url = "jdbc:mysql://localhost:3306/kirbybase";
         String username = "java";
         String password = "password";
 
@@ -41,7 +41,7 @@ public class MySQLInterfacer {
     }
 
     public static void setWelcomeMessage(String guildId, String welcomeMessage) {
-        String url = "jdbc:mysql://localhost:3306/whatevuh";
+        String url = "jdbc:mysql://localhost:3306/kirbybase";
         String username = "java";
         String password = "password";
 

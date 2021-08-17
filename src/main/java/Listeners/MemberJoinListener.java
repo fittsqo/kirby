@@ -13,13 +13,15 @@ import java.io.*;
 import java.net.URL;
 import java.util.Objects;
 
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+
 public class MemberJoinListener extends ListenerAdapter {
 
     String imagePath = "src/main/resources/images/welcome_blank_0.jpg";
 
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         String[] welcomeInfo = MySQLInterfacer.getWelcomeInfo(event.getGuild().getId());
-        if (welcomeInfo[0] != null) {
+        if (welcomeInfo[0] != null) { // if the welcome message is set
             User user = event.getUser();
             try {
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -42,7 +44,12 @@ public class MemberJoinListener extends ListenerAdapter {
                 drawCenteredString(g2d, "member #" + event.getGuild().getMemberCount(),
                         image.getWidth(), 13 * image.getHeight() / 15, new Font("coolvetica rg", Font.PLAIN, 50));
 
-                BufferedImage pfp = ImageIO.read(new URL(user.getAvatarUrl() + "?size=512"));
+                BufferedImage pfp = new BufferedImage(512, 512, TYPE_INT_RGB);
+                BufferedImage rawpfp = ImageIO.read(new URL(user.getAvatarUrl() + "?size=512"));
+                if (rawpfp.getHeight() != 512)
+                    pfp.getGraphics().drawImage(rawpfp.getScaledInstance(512, 512, Image.SCALE_SMOOTH), 0, 0, null);
+                else
+                    pfp.getGraphics().drawImage(rawpfp, 0, 0, null);
 
                 g2d.setStroke(new BasicStroke(20));
                 drawCenteredImage(g2d, pfp, image.getWidth(), (image.getHeight() - pfp.getHeight()) / 2 - 60);
