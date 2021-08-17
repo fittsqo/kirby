@@ -54,7 +54,7 @@ public class MemberJoinListener extends ListenerAdapter {
                 String welcomeMessage;
 
                 if (welcomeInfo[1] == null)
-                    welcomeInfo[1] = "welcome to %guild_name%, %user_mention%!";
+                    welcomeInfo[1] = "hi %user_mention% <3 welcome to %guild_name% :)";
 
                 welcomeMessage = (welcomeInfo[1]
                         .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
