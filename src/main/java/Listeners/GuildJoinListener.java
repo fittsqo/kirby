@@ -7,6 +7,7 @@ public class GuildJoinListener extends ListenerAdapter {
 
     public void onGuildJoin(GuildJoinEvent event) {
 
-    }
+        // TODO: initialize SQL (just make a new row and set the primary key to the guild id)
 
+    }
 }
