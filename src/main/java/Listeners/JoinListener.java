@@ -1,4 +1,4 @@
-package listeners;
+package Listeners;
 
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -42,14 +42,21 @@ public class JoinListener extends ListenerAdapter {
                     image.getWidth(), 13 * image.getHeight() / 15, new Font("coolvetica rg", Font.PLAIN, 50));
 
             BufferedImage pfp = ImageIO.read(new URL(user.getAvatarUrl() + "?size=512"));
+
             g2d.setStroke(new BasicStroke(20));
             drawCenteredImage(g2d, pfp, image.getWidth(), (image.getHeight() - pfp.getHeight()) / 2 - 60);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", baos);
             byte[] bytes = baos.toByteArray();
-            Objects.requireNonNull(event.getGuild().getDefaultChannel()).sendMessage("hi <@" + event.getUser().getId() + "> <3 welcome to yurahcomfy" +
-                    " \u02DA \u0F18 \u2661 \u22C6\uFF61\u02DA\u2740").addFile(bytes, "welcome_" + event.getUser().getName() + ".jpg").queue();
+
+            String welcome = ("hi <@" + event.getUser().getId() + "> <3 welcome to yurahcomfy" +
+                    " \u02DA \u0F18 \u2661 \u22C6\uFF61\u02DA\u2740");// TODO: add placeholder and command to change
+            event.getGuild().getDefaultChannel().sendMessage((Character.toString(0x10840))).queue();
+
+            Objects.requireNonNull(event.getGuild().getDefaultChannel()).sendMessage(welcome)
+                    .addFile(bytes, "welcome_" + event.getUser().getName() + ".jpg").queue();
+
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }

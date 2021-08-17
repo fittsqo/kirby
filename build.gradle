@@ -17,7 +17,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     implementation 'net.dv8tion:JDA:4.3.0_309'
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation 'ch.qos.logback:logback-classic:1.2.5'
+    implementation 'mysql:mysql-connector-java:8.0.26'
+
 }
 
 test {
