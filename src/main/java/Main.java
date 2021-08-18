@@ -1,8 +1,5 @@
-import Commands.StarterCommands;
-import Listeners.GuildJoinListener;
-import Listeners.MemberJoinListener;
-import Listeners.ReactionListener;
-import Listeners.ReadyListener;
+import Commands.GuildMessageReceivedListener;
+import Listeners.*;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -26,10 +23,11 @@ public class Main {
         jda.setActivity(Activity.listening("daddy hasan"));
         jda.addEventListeners(
                 new ReadyListener(),
-                new MemberJoinListener(),
-                new ReactionListener(),
-                new StarterCommands(),
-                new GuildJoinListener());
+                new GuildMemberJoinListener(),
+                new GuildMessageReactionListener(),
+                new GuildMessageReceivedListener(),
+                new GuildJoinListener(),
+                new GuildMessageDeleteListener());
         jda.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGE_REACTIONS);
 
         jda.build();

@@ -16,7 +16,7 @@ import java.util.Objects;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
-public class MemberJoinListener extends ListenerAdapter {
+public class GuildMemberJoinListener extends ListenerAdapter {
 
     String imagePath = "src/main/resources/images/welcome_blank_0.jpg";
 
