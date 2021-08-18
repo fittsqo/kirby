@@ -1,6 +1,6 @@
 package Commands;
 
-import DB.MySQLInterfacer;
+import DB.MySQLAdapter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -36,13 +36,13 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 break;
             case "!setwelcomechannel":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    MySQLInterfacer.setWelcomeChannel(event.getGuild().getId(), event.getChannel().getId());
+                    MySQLAdapter.setWelcomeChannel(event.getGuild().getId(), event.getChannel().getId());
                     event.getChannel().sendMessage("welcome channel set!").queue();
                 }
                 break;
             case "!setwelcomemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    MySQLInterfacer.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
+                    MySQLAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
                     event.getChannel().sendMessage("welcome message set!").queue();
                 }
                 break;

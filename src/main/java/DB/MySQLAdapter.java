@@ -2,7 +2,7 @@ package DB;
 
 import java.sql.*;
 
-public class MySQLInterfacer {
+public class MySQLAdapter {
 
     public static String[] getWelcomeInfo(String guildId) {
         String[] result = new String[3];

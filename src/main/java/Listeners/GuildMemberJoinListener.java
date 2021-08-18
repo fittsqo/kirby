@@ -1,6 +1,6 @@
 package Listeners;
 
-import DB.MySQLInterfacer;
+import DB.MySQLAdapter;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,7 +21,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
     String imagePath = "src/main/resources/images/welcome_blank_0.jpg";
 
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
-        String[] welcomeInfo = MySQLInterfacer.getWelcomeInfo(event.getGuild().getId());
+        String[] welcomeInfo = MySQLAdapter.getWelcomeInfo(event.getGuild().getId());
         if (welcomeInfo[0] != null) { // if the welcome message is set
             User user = event.getUser();
             try {
