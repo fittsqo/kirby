@@ -11,12 +11,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.internal.JDAImpl;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class GuildMessageReceivedListener extends ListenerAdapter {
 
-    public void onMessageReceived(GuildMessageReceivedEvent event) {
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         JDA jda = event.getJDA();
 
         if (event.getAuthor().isBot()) return;
