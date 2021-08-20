@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -48,18 +49,18 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 break;
             case "!setreactionroles":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    int reactionCount = 0;
+                    int emoteCount = 0;
+                    int roleCount = 0;
                     Guild eventGuild = event.getGuild();
                     String reactionRolesMessageId = contents[1];
 
                     if ((contents.length % 2 == 0) && contents.length > 2) { // validate command
                         if (eventGuild.getGuildChannelById(reactionRolesMessageId) != null) { // validate message exists
-
                             for (int i = 2; i < contents.length; i++) {
                                 // if emote
-                                // else if emoji
+                                // else if emoji (possibly flip this with emote)
                                 // else if role
-                                // else
+                                // else (not a valid reaction role message ??)
                             }
 
                         }
