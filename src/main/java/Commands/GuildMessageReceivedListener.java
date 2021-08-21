@@ -3,15 +3,16 @@ package Commands;
 import DB.MySQLAdapter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.internal.JDAImpl;
+import net.dv8tion.jda.internal.entities.GuildImpl;
+import net.dv8tion.jda.internal.entities.TextChannelImpl;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class GuildMessageReceivedListener extends ListenerAdapter {
@@ -22,7 +23,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
         Message message = event.getMessage();
         String rawMessage = message.getContentRaw();
-        String[] contents = rawMessage.split(" ");
+        String[] contents = rawMessage.split("[ \n]");
+        System.out.println(rawMessage);
+        System.out.println(Arrays.toString(contents));
         switch (contents[0]) {
             case "!ping":
                 MessageChannel channel = event.getChannel();
@@ -32,7 +35,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     ((JDAImpl) jda).handleEvent(new GuildMemberJoinEvent(jda, jda.getResponseTotal(), Objects.requireNonNull(event.getMember())));
                     event.getChannel().sendMessage("simulated welcome message. if the message did not show up, try " +
-                            "`!setwelcomechannel` and then run the command again.").queue();
+                            "!setwelcomechannel and then run the command again.").queue();
                 }
                 break;
             case "!setwelcomechannel":
@@ -47,23 +50,19 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                     event.getChannel().sendMessage("welcome message set!").queue();
                 }
                 break;
-            case "!setreactionroles":
+            case "!createrolemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     int emoteCount = 0;
                     int roleCount = 0;
                     Guild eventGuild = event.getGuild();
-                    String reactionRolesMessageId = contents[1];
+                    if (eventGuild.getChannels().contains(new TextChannelImpl(Long.parseLong(contents[1]), (GuildImpl)eventGuild))) {
+                        // if this is a valid channel
+                    } else {
+                        // not valid channel
+                        event.getChannel().sendMessage("invalid text channel!").queue();
+                    }
+                    for (String s : contents) {
 
-                    if ((contents.length % 2 == 0) && contents.length > 2) { // validate command
-                        if (eventGuild.getGuildChannelById(reactionRolesMessageId) != null) { // validate message exists
-                            for (int i = 2; i < contents.length; i++) {
-                                // if emote
-                                // else if emoji (possibly flip this with emote)
-                                // else if role
-                                // else (not a valid reaction role message ??)
-                            }
-
-                        }
                     }
                 }
                 break;

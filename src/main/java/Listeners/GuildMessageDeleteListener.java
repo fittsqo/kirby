@@ -9,7 +9,7 @@ public class GuildMessageDeleteListener extends ListenerAdapter {
 
     public void onGuildMessageDeleteEvent (@Nonnull GuildMessageDeleteEvent event) {
 
-        // see if it's a reaction role message, delete row if it is
+        // TODO see if it's a reaction role message, delete row if it is
 
     }
 }
