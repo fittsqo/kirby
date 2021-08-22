@@ -16,6 +16,8 @@ import net.dv8tion.jda.internal.entities.EmoteImpl;
 import net.dv8tion.jda.internal.entities.GuildImpl;
 import net.dv8tion.jda.internal.entities.TextChannelImpl;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -40,19 +42,48 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     ((JDAImpl) jda).handleEvent(new GuildMemberJoinEvent(jda, jda.getResponseTotal(), Objects.requireNonNull(event.getMember())));
                     event.getChannel().sendMessage("simulated welcome message. if the message did not show up, try " +
-                            "!setwelcomechannel and then run the command again.").queue();
+                            "`!setwelcomechannel #channel` and then run the command again.").queue();
                 }
                 break;
             case "!setwelcomechannel": // TODO implement setwelcomechannel with Pattern.matches(Message.MentionType.CHANNEL...)
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    MySQLAdapter.setWelcomeChannel(event.getGuild().getId(), event.getChannel().getId());
-                    event.getChannel().sendMessage("welcome channel set!").queue();
+                    String temp;
+                    if (contents.length > 1) {
+                        if (Pattern.matches(Message.MentionType.CHANNEL.getPattern().toString(), contents[1])) {
+                            temp = contents[1].substring(2, contents[1].length() - 1);
+                            if (event.getGuild().getTextChannelById(temp) != null) {
+                                MySQLAdapter.setWelcomeChannel(event.getGuild().getId(), temp);
+                                event.getChannel().sendMessage("welcome channel set: <#" + temp + ">").queue();
+                            }
+                        }
+                        else event.getChannel().sendMessage("channel does not exist!").queue();
+                    }
+                    else event.getChannel().sendMessage("welcome channel not specified!").queue();
                 }
                 break;
-            case "!setwelcomemessage": // TODO implement setwelcomeimagemessage and setwelcomeimage
+            case "!setwelcomemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    MySQLAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
-                    event.getChannel().sendMessage("welcome message set!").queue();
+                    if (contents.length > 1) {
+                        MySQLAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
+                        event.getChannel().sendMessage("welcome message set!").queue();
+                    } else event.getChannel().sendMessage("invalid welcome message!").queue();
+                }
+                break;
+            case "!setwelcomeimage":
+                if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
+                    if (Files.exists(Path.of("src/main/resources/images/welcome_blank_" + contents[1] + ".jpg"))) {
+                        MySQLAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
+                        event.getChannel().sendMessage("welcome image set!").queue();
+                    }
+                    else event.getChannel().sendMessage("invalid image selected!").queue();
+                }
+                break;
+            case "!setwelcomeimagemessage":
+                if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
+                    if (contents.length > 1 && rawMessage.length() < 40) {
+                        MySQLAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
+                        event.getChannel().sendMessage("welcome image message set!").queue();
+                    } else event.getChannel().sendMessage("invalid message!").queue();
                 }
                 break;
             case "!createrolemessage":
@@ -64,7 +95,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         temp = contents[1].substring(2, contents[1].length() - 1);
                         if (eventGuild.getTextChannelById(temp) != null) {
                             // if text channel exists in the server
-                            event.getChannel().sendMessage("found text channel!").queue();
+                            event.getChannel().sendMessage("found text channel: <#" + temp + ">").queue();
                             ArrayList<String> emotes = new ArrayList<>();
                             ArrayList<String> roles = new ArrayList<>();
 
@@ -74,27 +105,27 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 if (EmojiManager.isEmoji(contents[i])) {
                                     // if this is an emoji
                                     emotes.add(contents[i]);
-                                    event.getChannel().sendMessage("found emoji!").queue();
+                                    event.getChannel().sendMessage("found emoji: " + contents[i]).queue();
                                 } else if (Pattern.matches(Message.MentionType.EMOTE.getPattern().toString(), contents[i])) {
                                     // if this is following custom emote pattern
                                     temp = contents[i].replaceAll("^.*(?=:)", "");
                                     temp = temp.substring(1, temp.length() - 1);
                                     if (eventGuild.getEmoteById(temp) != null) {
                                         // if this is a custom emote in the server
-                                        event.getChannel().sendMessage("found custom emote!").queue();
+                                        event.getChannel().sendMessage("found custom emote: " + Objects.requireNonNull(eventGuild.getEmoteById(temp)).getAsMention()).queue();
                                         emotes.add(temp);
                                     } else {
-                                        event.getChannel().sendMessage("custom emote not in this server!").queue();
+                                        event.getChannel().sendMessage("emote not found!").queue();
                                     }
                                 } else if (Pattern.matches(Message.MentionType.ROLE.getPattern().toString(), contents[i])) {
                                     // if this is following role mention pattern
-                                    temp = contents[i].substring(3, contents[i].length() - 1);
+                                    temp = contents[i].substring(2, contents[i].length() - 1);
                                     if (eventGuild.getRoleById(temp) != null) {
                                         // if this is a role in the server
-                                        event.getChannel().sendMessage("found role!").queue();
+                                        event.getChannel().sendMessage("found role: <@" + temp + ">").queue();
                                         roles.add(contents[i]);
                                     } else {
-                                        event.getChannel().sendMessage("mentioned role not in this server!").queue();
+                                        event.getChannel().sendMessage("mentioned role not found!").queue();
                                     }
                                 } else {
                                     looping = false;
@@ -110,10 +141,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 Matcher m = p.matcher(rawMessage);
                                 if (m.find()) {
                                     temp = m.group().replaceAll("\"", "");
-                                    event.getChannel().sendMessage("found message!").queue();
+                                    event.getChannel().sendMessage("found message:\n" + temp).queue();
                                 } else {
-                                    temp = "default message";
-                                    event.getChannel().sendMessage("no message added!").queue();
+                                    event.getChannel().sendMessage("no message found!").queue();
                                 }
                             } else {
                                 // more emotes than reactions, or vice versa
@@ -121,10 +151,10 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                             }
                         } else {
                             // not valid channel
-                            event.getChannel().sendMessage("text channel not in this server!").queue();
+                            event.getChannel().sendMessage("text channel not found!").queue();
                         }
                     } else {
-                        event.getChannel().sendMessage("text channel not mentioned!").queue();
+                        event.getChannel().sendMessage("text channel missing!").queue();
                     }
                     break;
                 }

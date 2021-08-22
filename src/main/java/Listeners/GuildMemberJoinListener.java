@@ -34,11 +34,13 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 BufferedImage pfp = new BufferedImage(PFP_DIM, PFP_DIM, TYPE_INT_RGB);
                 BufferedImage rawPfp = ImageIO.read(new URL(user.getEffectiveAvatarUrl() + "?size=" + PFP_DIM));
 
-                String BG_PATH = "src/main/resources/images/welcome_blank_0.jpg";
-                BufferedImage image = ImageIO.read(new File(BG_PATH));
-                if (image.getHeight() != BG_HEIGHT || image.getWidth() != BG_WIDTH) return;
+                int welcomeImageId = Integer.parseInt(welcomeInfo[2].replaceAll("'", ""));
 
-                Graphics2D g2d = image.createGraphics();
+                String BG_PATH = "src/main/resources/images/welcome_blank_" + welcomeImageId + ".jpg";
+                BufferedImage background = ImageIO.read(new File(BG_PATH));
+                if (background.getHeight() != BG_HEIGHT || background.getWidth() != BG_WIDTH) return;
+
+                Graphics2D g2d = background.createGraphics();
                 g2d.setRenderingHint(
                         RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
@@ -51,8 +53,21 @@ public class GuildMemberJoinListener extends ListenerAdapter {
 
                 drawTopRectangle(g2d);
 
+                String welcomeMessage = (welcomeInfo[1]
+                        .replaceAll("'", "")
+                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
+                        .replaceAll("%user_name%", event.getUser().getName())
+                        .replaceAll("%guild_name%", event.getGuild().getName()));
+
+                String welcomeImageMessage = welcomeInfo[3]
+                        .replaceAll("'", "")
+                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
+                        .replaceAll("%user_name%", event.getUser().getName())
+                        .replaceAll("%guild_name%", event.getGuild().getName())
+                        .replaceAll("%user_tag%", event.getUser().getAsTag());
+
                 int TITLE_FONT_SIZE = 80;
-                drawCenteredString(g2d, user.getAsTag() + " wants to be comfy :D",
+                drawCenteredString(g2d, welcomeImageMessage,
                         BG_HEIGHT * 83 / 100, new Font("coolvetica rg", Font.PLAIN, TITLE_FONT_SIZE));
                 int SUBTITLE_FONT_SIZE = 50;
                 drawCenteredString(g2d, "member #" + event.getGuild().getMemberCount(),
@@ -66,20 +81,10 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 drawCenteredImage(g2d, pfp, (BG_HEIGHT - pfp.getHeight()) * 40 / 100);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "jpg", baos);
+                ImageIO.write(background, "jpg", baos);
                 byte[] bytes = baos.toByteArray();
 
-                String welcomeMessage;
-
-                if (welcomeInfo[1] == null)
-                    welcomeInfo[1] = "hi %user_mention% <3 welcome to %guild_name% :)";
-
-                welcomeMessage = (welcomeInfo[1]
-                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
-                        .replaceAll("%user_name%", event.getUser().getName())
-                        .replaceAll("%guild_name%", event.getGuild().getName()));
-
-                Objects.requireNonNull(event.getGuild().getTextChannelById(welcomeInfo[0])).sendMessage(welcomeMessage)
+                 Objects.requireNonNull(event.getGuild().getTextChannelById(welcomeInfo[0])).sendMessage(welcomeMessage)
                         .addFile(bytes, "welcome_" + event.getUser().getName() + ".jpg").queue();
 
             } catch (IOException | FontFormatException e) {
