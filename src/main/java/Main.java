@@ -27,8 +27,12 @@ public class Main {
                 new GuildMessageReactionListener(),
                 new GuildMessageReceivedListener(),
                 new GuildJoinListener(),
-                new GuildMessageDeleteListener());
-        jda.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGE_REACTIONS);
+                new GuildMessageDeleteListener()
+        );
+        jda.enableIntents(
+                GatewayIntent.GUILD_MEMBERS,
+                GatewayIntent.GUILD_MESSAGE_REACTIONS
+        );
 
         jda.build();
     }

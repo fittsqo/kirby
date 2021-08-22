@@ -45,7 +45,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                             "`!setwelcomechannel #channel` and then run the command again.").queue();
                 }
                 break;
-            case "!setwelcomechannel": // TODO implement setwelcomechannel with Pattern.matches(Message.MentionType.CHANNEL...)
+            case "!setwelcomechannel":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     String temp;
                     if (contents.length > 1) {
@@ -64,8 +64,10 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
             case "!setwelcomemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
-                        MySQLAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
-                        event.getChannel().sendMessage("welcome message set!").queue();
+                        if (rawMessage.length() < 2019) {
+                            MySQLAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
+                            event.getChannel().sendMessage("welcome message set!").queue();
+                        } else event.getChannel().sendMessage("welcome message must be less than 2000 characters!").queue();
                     } else event.getChannel().sendMessage("invalid welcome message!").queue();
                 }
                 break;
@@ -73,17 +75,19 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (Files.exists(Path.of("src/main/resources/images/welcome_blank_" + contents[1] + ".jpg"))) {
                         MySQLAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
-                        event.getChannel().sendMessage("welcome image set!").queue();
+                        event.getChannel().sendMessage("welcome image id set!").queue();
                     }
-                    else event.getChannel().sendMessage("invalid image selected!").queue();
+                    else event.getChannel().sendMessage("invalid image id!").queue();
                 }
                 break;
             case "!setwelcomeimagemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    if (contents.length > 1 && rawMessage.length() < 40) {
-                        MySQLAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
-                        event.getChannel().sendMessage("welcome image message set!").queue();
-                    } else event.getChannel().sendMessage("invalid message!").queue();
+                    if (contents.length > 1) {
+                        if (rawMessage.length() < 64) {
+                            MySQLAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
+                            event.getChannel().sendMessage("welcome image message set!").queue();
+                        } else event.getChannel().sendMessage("welcome image message must be less than 40 characters!").queue();
+                    } else event.getChannel().sendMessage("invalid welcome image message!").queue();
                 }
                 break;
             case "!createrolemessage":
@@ -119,10 +123,10 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                     }
                                 } else if (Pattern.matches(Message.MentionType.ROLE.getPattern().toString(), contents[i])) {
                                     // if this is following role mention pattern
-                                    temp = contents[i].substring(2, contents[i].length() - 1);
+                                    temp = contents[i].substring(3, contents[i].length() - 1);
                                     if (eventGuild.getRoleById(temp) != null) {
                                         // if this is a role in the server
-                                        event.getChannel().sendMessage("found role: <@" + temp + ">").queue();
+                                        event.getChannel().sendMessage("found role: <@&" + temp + ">").queue();
                                         roles.add(contents[i]);
                                     } else {
                                         event.getChannel().sendMessage("mentioned role not found!").queue();
@@ -141,7 +145,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 Matcher m = p.matcher(rawMessage);
                                 if (m.find()) {
                                     temp = m.group().replaceAll("\"", "");
-                                    event.getChannel().sendMessage("found message:\n" + temp).queue();
+                                    event.getChannel().sendMessage("found message: " + temp).queue();
                                 } else {
                                     event.getChannel().sendMessage("no message found!").queue();
                                 }
