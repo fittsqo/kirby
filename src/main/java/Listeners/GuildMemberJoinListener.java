@@ -18,7 +18,10 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public class GuildMemberJoinListener extends ListenerAdapter {
 
-    String imagePath = "src/main/resources/images/welcome_blank_0.jpg";
+    private final int BG_WIDTH = 1696;
+    private final int BG_HEIGHT = 954;
+    private final int PFP_DIM = 512; // image will be scaled to this anyways...
+    private final int MARGIN = 30;
 
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
         String[] welcomeInfo = MySQLAdapter.getWelcomeInfo(event.getGuild().getId());
@@ -28,10 +31,13 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/fonts/coolvetica rg.ttf")));
 
-                BufferedImage pfp = new BufferedImage(512, 512, TYPE_INT_RGB);
-                BufferedImage rawPfp = ImageIO.read(new URL(user.getEffectiveAvatarUrl() + "?size=512"));
+                BufferedImage pfp = new BufferedImage(PFP_DIM, PFP_DIM, TYPE_INT_RGB);
+                BufferedImage rawPfp = ImageIO.read(new URL(user.getEffectiveAvatarUrl() + "?size=" + PFP_DIM));
 
-                BufferedImage image = ImageIO.read(new File(imagePath));
+                String BG_PATH = "src/main/resources/images/welcome_blank_0.jpg";
+                BufferedImage image = ImageIO.read(new File(BG_PATH));
+                if (image.getHeight() != BG_HEIGHT || image.getWidth() != BG_WIDTH) return;
+
                 Graphics2D g2d = image.createGraphics();
                 g2d.setRenderingHint(
                         RenderingHints.KEY_ANTIALIASING,
@@ -43,18 +49,21 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                         RenderingHints.KEY_RENDERING,
                         RenderingHints.VALUE_RENDER_QUALITY);
 
-                drawCenteredString(g2d, user.getAsTag() + " wants to be comfy :D",
-                        image.getWidth(), image.getHeight() * 83 / 100, new Font("coolvetica rg", Font.PLAIN, 80));
-                drawCenteredString(g2d, "member #" + event.getGuild().getMemberCount(),
-                        image.getWidth(), image.getHeight() * 88 / 100, new Font("coolvetica rg", Font.PLAIN, 50));
+                drawTopRectangle(g2d);
 
-                if (rawPfp.getHeight() != 512)
-                    pfp.getGraphics().drawImage(rawPfp.getScaledInstance(512, 512, Image.SCALE_SMOOTH), 0, 0, null);
+                int TITLE_FONT_SIZE = 80;
+                drawCenteredString(g2d, user.getAsTag() + " wants to be comfy :D",
+                        BG_HEIGHT * 83 / 100, new Font("coolvetica rg", Font.PLAIN, TITLE_FONT_SIZE));
+                int SUBTITLE_FONT_SIZE = 50;
+                drawCenteredString(g2d, "member #" + event.getGuild().getMemberCount(),
+                        BG_HEIGHT * 88 / 100, new Font("coolvetica rg", Font.PLAIN, SUBTITLE_FONT_SIZE));
+
+                if (rawPfp.getHeight() != PFP_DIM)
+                    pfp.getGraphics().drawImage(rawPfp.getScaledInstance(PFP_DIM, PFP_DIM, Image.SCALE_SMOOTH), 0, 0, null);
                 else
                     pfp.getGraphics().drawImage(rawPfp, 0, 0, null);
 
-                g2d.setStroke(new BasicStroke(20));
-                drawCenteredImage(g2d, pfp, image.getWidth(), (image.getHeight() - pfp.getHeight()) * 40 / 100);
+                drawCenteredImage(g2d, pfp, (BG_HEIGHT - pfp.getHeight()) * 40 / 100);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(image, "jpg", baos);
@@ -79,24 +88,35 @@ public class GuildMemberJoinListener extends ListenerAdapter {
         }
     }
 
-    public void drawCenteredString(Graphics g2d, String text, int backgroundWidth, int textHeight, Font font) {
+    public void drawCenteredString(Graphics g2d, String text, int textHeight, Font font) {
+        Color color = new Color(255, 255, 255, 255);
+        g2d.setColor(color);
         int metricsWidth = g2d.getFontMetrics(font).stringWidth(text);
         int fontSize = font.getSize();
         g2d.setFont(font);
-        while (metricsWidth > backgroundWidth - 80) { // i arbitrarily decided that 40px on each side is nice
+        while (metricsWidth > BG_WIDTH - (MARGIN * 2)) { // 40px on each side
             fontSize -= 5;
             font = new Font(font.getFontName(), font.getStyle(), fontSize);
             g2d.setFont(font);
             metricsWidth = g2d.getFontMetrics(font).stringWidth(text);
         }
-        int x = (backgroundWidth - metricsWidth) / 2;
+        int x = (BG_WIDTH - metricsWidth) / 2;
         g2d.drawString(text, x, textHeight);
     }
 
-    public void drawCenteredImage(Graphics2D g2d, BufferedImage img, int backgroundWidth, int foregroundHeight) {
-        int x = (backgroundWidth - img.getWidth()) / 2;
-        g2d.drawArc(backgroundWidth/2-256, foregroundHeight, 512, 512, 0, 360);
-        g2d.setClip(new Ellipse2D.Double((double)backgroundWidth/2-256, foregroundHeight, 512, 512));
-        g2d.drawImage(img, x, foregroundHeight, null);
+    public void drawCenteredImage(Graphics2D g2d, BufferedImage pfp, int foregroundHeight) {
+        Color color = new Color(255, 255, 255, 255);
+        g2d.setStroke(new BasicStroke(20));
+        g2d.setColor(color);
+        int x = (BG_WIDTH - pfp.getWidth()) / 2;
+        g2d.drawArc(BG_WIDTH/2-256, foregroundHeight, PFP_DIM, PFP_DIM, 0, 360);
+        g2d.setClip(new Ellipse2D.Double((double)BG_WIDTH/2-256, foregroundHeight, PFP_DIM, PFP_DIM));
+        g2d.drawImage(pfp, x, foregroundHeight, null);
+    }
+
+    public void drawTopRectangle(Graphics2D g2d) {
+        Color color = new Color(99, 85, 91, 0x80); // i wonder if this is a nice color
+        g2d.setColor(color);
+        g2d.fillRect(MARGIN, MARGIN, BG_WIDTH - (2 * MARGIN), BG_HEIGHT - (2 * MARGIN));
     }
 }
