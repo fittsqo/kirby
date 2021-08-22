@@ -31,7 +31,6 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
         Message message = event.getMessage();
         String rawMessage = message.getContentRaw();
         String[] contents = rawMessage.split("[ \n]");
-        System.out.println(Arrays.toString(contents));
         switch (contents[0]) {
             case "!ping":
                 MessageChannel channel = event.getChannel();
@@ -58,14 +57,14 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 break;
             case "!createrolemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
-                    String msg;
                     String temp;
                     Guild eventGuild = event.getGuild();
-                    if (contents[1].matches("\\d+"))
-                        if (eventGuild.getTextChannelById(contents[1]) != null) {
-                            // if this is a valid channel
+                    if (Pattern.matches(Message.MentionType.CHANNEL.getPattern().toString(), contents[1])) {
+                        // if text channel arg is formatted as a text channel
+                        temp = contents[1].substring(2, contents[1].length() - 1);
+                        if (eventGuild.getTextChannelById(temp) != null) {
+                            // if text channel exists in the server
                             event.getChannel().sendMessage("found text channel!").queue();
-
                             ArrayList<String> emotes = new ArrayList<>();
                             ArrayList<String> roles = new ArrayList<>();
 
@@ -75,56 +74,60 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 if (EmojiManager.isEmoji(contents[i])) {
                                     // if this is an emoji
                                     emotes.add(contents[i]);
-                                    event.getChannel().sendMessage("found emoji in message!").queue();
+                                    event.getChannel().sendMessage("found emoji!").queue();
                                 } else if (Pattern.matches(Message.MentionType.EMOTE.getPattern().toString(), contents[i])) {
                                     // if this is following custom emote pattern
                                     temp = contents[i].replaceAll("^.*(?=:)", "");
-                                    temp = temp.substring(1, temp.length()-1);
+                                    temp = temp.substring(1, temp.length() - 1);
                                     if (eventGuild.getEmoteById(temp) != null) {
                                         // if this is a custom emote in the server
-                                        event.getChannel().sendMessage("found custom emote in message!").queue();
+                                        event.getChannel().sendMessage("found custom emote!").queue();
                                         emotes.add(temp);
+                                    } else {
+                                        event.getChannel().sendMessage("custom emote not in this server!").queue();
                                     }
-                                    else
-                                        event.getChannel().sendMessage("custom emote is not in this server!").queue();
                                 } else if (Pattern.matches(Message.MentionType.ROLE.getPattern().toString(), contents[i])) {
                                     // if this is following role mention pattern
-                                    temp = contents[i].replaceAll("^.*(?=&)", "");
-                                    temp = temp.substring(1, temp.length()-1);
+                                    temp = contents[i].substring(3, contents[i].length() - 1);
                                     if (eventGuild.getRoleById(temp) != null) {
                                         // if this is a role in the server
-                                        event.getChannel().sendMessage("found role in message!").queue();
+                                        event.getChannel().sendMessage("found role!").queue();
                                         roles.add(contents[i]);
-                                    } else
-                                        event.getChannel().sendMessage("mentioned role does not exist!").queue();
-                                } else if (contents[i].charAt(0) == '\"') {
-                                    // beginning of quote wrapped message
-                                    looping = false;
+                                    } else {
+                                        event.getChannel().sendMessage("mentioned role not in this server!").queue();
+                                    }
                                 } else {
-                                    event.getChannel().sendMessage("you did something wrong lul (or brian did xd)").queue();
                                     looping = false;
                                 }
                                 i++;
+                                if (i >= contents.length) {
+                                    looping = false;
+                                }
                             }
-
-                            if (emotes.size() != roles.size()) {
-
+                            if (emotes.size() == roles.size()) {
+                                // if same number of emotes and roles in message (1 emote maps to 1 reaction)
                                 Pattern p = Pattern.compile("\"([^\"]*)\"");
                                 Matcher m = p.matcher(rawMessage);
-                                if (m.find())
-                                    msg = m.group().replaceAll("\"", "");
-                                else
-                                    msg = "default message";
-                                System.out.println(msg);
+                                if (m.find()) {
+                                    temp = m.group().replaceAll("\"", "");
+                                    event.getChannel().sendMessage("found message!").queue();
+                                } else {
+                                    temp = "default message";
+                                    event.getChannel().sendMessage("no message added!").queue();
+                                }
+                            } else {
+                                // more emotes than reactions, or vice versa
+                                event.getChannel().sendMessage("different number of emotes and reactions!").queue();
                             }
                         } else {
                             // not valid channel
-                            event.getChannel().sendMessage("unknown text channel!").queue();
+                            event.getChannel().sendMessage("text channel not in this server!").queue();
                         }
-                    else
-                        event.getChannel().sendMessage("nonexistent text channel!").queue();
+                    } else {
+                        event.getChannel().sendMessage("text channel not mentioned!").queue();
+                    }
+                    break;
                 }
-                break;
         }
     }
 }
