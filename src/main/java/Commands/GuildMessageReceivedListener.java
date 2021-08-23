@@ -33,6 +33,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 MessageChannel channel = event.getChannel();
                 channel.sendMessage("pong!").queue();
                 break;
+
             case "!simwelcome":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     ((JDAImpl) jda).handleEvent(new GuildMemberJoinEvent(jda, jda.getResponseTotal(), Objects.requireNonNull(event.getMember())));
@@ -40,6 +41,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                             "`!setwelcomechannel #channel` and then run the command again.").queue();
                 }
                 break;
+
             case "!setwelcomechannel":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     String temp;
@@ -56,6 +58,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                     else event.getChannel().sendMessage("welcome channel not specified!").queue();
                 }
                 break;
+
             case "!setwelcomemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
@@ -66,6 +69,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                     } else event.getChannel().sendMessage("invalid welcome message!").queue();
                 }
                 break;
+
             case "!setwelcomeimage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (Files.exists(Path.of("src/main/resources/images/welcome_blank_" + contents[1] + ".jpg"))) {
@@ -75,6 +79,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                     else event.getChannel().sendMessage("invalid image id!").queue();
                 }
                 break;
+
             case "!setwelcomeimagemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
@@ -85,6 +90,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                     } else event.getChannel().sendMessage("invalid welcome image message!").queue();
                 }
                 break;
+
             case "!createrolemessage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     MessageBuilder mb = new MessageBuilder();
@@ -178,6 +184,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                         });
                                     }
                                     MySQLAdapter.createReactionRoleMessage(eventGuild.getId(), textChannel.getId(), reactionRoles);
+                                    mb.append("reaction role message sent!\n");
                                 });
 
                             } else {
@@ -195,6 +202,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         event.getChannel().sendMessage(mb.build()).queue();
                     break;
                 }
+            case ("!reset"):
+                MySQLAdapter.resetServer(event.getGuild().getId());
+                break;
         }
     }
 }

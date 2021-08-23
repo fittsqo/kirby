@@ -12,12 +12,7 @@ public class GuildJoinListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(@Nonnull GuildJoinEvent event) {
 
-        String[] joinValues = new String[3];
-        joinValues[0] = "hi %user_id% <3 welcome to %guild_name% :)";
-        joinValues[1] = "0";
-        joinValues[2] = "%user_tag% joined the server";
-
-        MySQLAdapter.initializeServer(event.getGuild().getId(), joinValues);
+        MySQLAdapter.initializeServer(event.getGuild().getId());
 
     }
 }
