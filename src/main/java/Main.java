@@ -20,7 +20,7 @@ public class Main {
 
         jda.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
         jda.setBulkDeleteSplittingEnabled(false);
-        jda.setActivity(Activity.watching("daddy hasan"));
+        jda.setActivity(Activity.watching("the stars"));
         jda.addEventListeners(
                 new ReadyListener(),
                 new GuildMemberJoinListener(),

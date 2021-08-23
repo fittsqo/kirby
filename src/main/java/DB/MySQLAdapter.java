@@ -1,6 +1,7 @@
 package DB;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class MySQLAdapter {
 
@@ -26,8 +27,8 @@ public class MySQLAdapter {
             rs.next();
             for (int i = 1; i <= md.getColumnCount(); i++) {
                 if (rs.getString(i) == null)
-                    result[i-1] = null;
-                else result[i-1] = rs.getString(i);
+                    result[i - 1] = null;
+                else result[i - 1] = rs.getString(i);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
@@ -87,4 +88,33 @@ public class MySQLAdapter {
         }
     }
 
+    public static void createReactionRoleMessage(ArrayList<String[]> reactionRoles) {
+        String url = "jdbc:mysql://localhost:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8";
+        String username = "java";
+        String password = "password";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            Statement statement = connection.createStatement();
+            for (String[] a : reactionRoles)
+                statement.executeUpdate("INSERT INTO reaction_role (`message_id`, `reaction`, `role_id`) VALUES ('" + a[0] + "', '" + a[1] + "', '" + a[2] + "')");
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot connect the database!", e);
+        }
+    }
+
+    public static String getReactionRole(String messageId, String reaction) {
+        String url = "jdbc:mysql://localhost:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8";
+        String username = "java";
+        String password = "password";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT role_id FROM reaction_role WHERE message_id = '" + messageId + "' AND reaction = '" + reaction + "'");
+            if (rs.next())
+                return rs.getString("role_id");
+            return null;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot connect the database!", e);
+        }
+    }
 }

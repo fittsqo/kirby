@@ -1,5 +1,7 @@
 package Listeners;
 
+import DB.MySQLAdapter;
+import com.vdurmont.emoji.EmojiManager;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
@@ -11,17 +13,35 @@ import java.util.Objects;
 public class GuildMessageReactionListener extends ListenerAdapter {
 
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
-//        System.out.println("Guild: " + event.getGuild());
-//        System.out.println("User: " + event.getUser());
-//        System.out.println("Channel: " + event.getChannel());
-//        System.out.println("Message: " + event.getMessageId());
-//        System.out.println("Reaction: " + event.getReactionEmote());
-//        System.out.println("=====================");
+        String reactionId;
+        String roleId;
+
+        if (event.getReactionEmote().isEmoji())
+            reactionId = event.getReactionEmote().getEmoji();
+        else
+            reactionId = event.getReactionEmote().getId();
+
+        roleId = MySQLAdapter.getReactionRole(event.getMessageId(), reactionId);
+
+        event.retrieveMember().queue();
+        if (roleId != null)
+            event.getGuild().addRoleToMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(roleId))).queue();
     }
 
     public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
+        String reactionId;
+        String roleId;
 
-        // TODO remove role when reaction removed
+        if (event.getReactionEmote().isEmoji())
+            reactionId = event.getReactionEmote().getEmoji();
+        else
+            reactionId = event.getReactionEmote().getId();
 
+        roleId = MySQLAdapter.getReactionRole(event.getMessageId(), reactionId);
+
+        // TODO: learn how to retrieve members
+
+        if (roleId != null)
+            event.getGuild().removeRoleFromMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(roleId))).queue();
     }
 }
