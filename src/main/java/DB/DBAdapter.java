@@ -3,10 +3,9 @@ package DB;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class MySQLAdapter {
+public class DBAdapter {
 
     public static void initializeServer(String guildId) {
-        // add new row and set welcome message, welcome image, and welcome image message
         String url = "jdbc:mysql://localhost:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8";
         String username = "java";
         String password = "password";

@@ -1,13 +1,12 @@
 package Listeners;
 
-import DB.MySQLAdapter;
+import DB.DBAdapter;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class GuildMessageReactionListener extends ListenerAdapter {
 
@@ -21,7 +20,7 @@ public class GuildMessageReactionListener extends ListenerAdapter {
         else
             reactionId = event.getReactionEmote().getId();
 
-        roleId = MySQLAdapter.getReactionRole(event.getMessageId(), reactionId);
+        roleId = DBAdapter.getReactionRole(event.getMessageId(), reactionId);
         if (roleId != null) {
             role = event.getGuild().getRoleById(roleId);
             if (role != null)
@@ -39,7 +38,7 @@ public class GuildMessageReactionListener extends ListenerAdapter {
         else
             reactionId = event.getReactionEmote().getId();
 
-        roleId = MySQLAdapter.getReactionRole(event.getMessageId(), reactionId);
+        roleId = DBAdapter.getReactionRole(event.getMessageId(), reactionId);
         if (roleId != null) {
             role = event.getGuild().getRoleById(roleId);
             if (role != null)

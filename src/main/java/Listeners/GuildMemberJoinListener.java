@@ -1,6 +1,6 @@
 package Listeners;
 
-import DB.MySQLAdapter;
+import DB.DBAdapter;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,7 +24,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
     private final int MARGIN = 30;
 
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
-        String[] welcomeInfo = MySQLAdapter.getWelcomeInfo(event.getGuild().getId());
+        String[] welcomeInfo = DBAdapter.getWelcomeInfo(event.getGuild().getId());
         if (welcomeInfo[0] != null) { // if the welcome message is set
             User user = event.getUser();
             try {

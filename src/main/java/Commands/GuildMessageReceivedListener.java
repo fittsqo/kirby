@@ -1,6 +1,6 @@
 package Commands;
 
-import DB.MySQLAdapter;
+import DB.DBAdapter;
 import com.vdurmont.emoji.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -49,7 +49,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         if (Pattern.matches(Message.MentionType.CHANNEL.getPattern().toString(), contents[1])) {
                             temp = contents[1].substring(2, contents[1].length() - 1);
                             if (event.getGuild().getTextChannelById(temp) != null) {
-                                MySQLAdapter.setWelcomeChannel(event.getGuild().getId(), temp);
+                                DBAdapter.setWelcomeChannel(event.getGuild().getId(), temp);
                                 event.getChannel().sendMessage("welcome channel set: <#" + temp + ">").queue();
                             }
                         }
@@ -63,7 +63,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
                         if (rawMessage.length() < 2019) {
-                            MySQLAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
+                            DBAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
                             event.getChannel().sendMessage("welcome message set!").queue();
                         } else event.getChannel().sendMessage("welcome message must be less than 2000 characters!").queue();
                     } else event.getChannel().sendMessage("invalid welcome message!").queue();
@@ -73,7 +73,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
             case "!setwelcomeimage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (Files.exists(Path.of("src/main/resources/images/welcome_blank_" + contents[1] + ".jpg"))) {
-                        MySQLAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
+                        DBAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
                         event.getChannel().sendMessage("welcome image id set!").queue();
                     }
                     else event.getChannel().sendMessage("invalid image id!").queue();
@@ -84,7 +84,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
                         if (rawMessage.length() < 64) {
-                            MySQLAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
+                            DBAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
                             event.getChannel().sendMessage("welcome image message set!").queue();
                         } else event.getChannel().sendMessage("welcome image message must be less than 40 characters!").queue();
                     } else event.getChannel().sendMessage("invalid welcome image message!").queue();
@@ -183,7 +183,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                                 t.getId(), emotes.get(j), roles.get(j)
                                         });
                                     }
-                                    MySQLAdapter.createReactionRoleMessage(eventGuild.getId(), textChannel.getId(), reactionRoles);
+                                    DBAdapter.createReactionRoleMessage(eventGuild.getId(), textChannel.getId(), reactionRoles);
                                     mb.append("reaction role message sent!\n");
                                 });
 
@@ -203,7 +203,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                     break;
                 }
             case ("!reset"):
-                MySQLAdapter.resetServer(event.getGuild().getId());
+                DBAdapter.resetServer(event.getGuild().getId());
                 break;
         }
     }
