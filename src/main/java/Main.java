@@ -27,11 +27,14 @@ public class Main {
                 new GuildMessageReactionListener(),
                 new GuildMessageReceivedListener(),
                 new GuildJoinListener(),
-                new GuildMessageDeleteListener()
+                new GuildMessageDeleteListener(),
+                new GuildLeaveListener(),
+                new TextChannelDeleteListener()
         );
         jda.enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
-                GatewayIntent.GUILD_MESSAGE_REACTIONS
+                GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                GatewayIntent.GUILD_EMOJIS
         );
 
         jda.build();

@@ -5,13 +5,33 @@ import java.util.ArrayList;
 
 public class MySQLAdapter {
 
-    public static void initializeServer(String guildId) {
+    public static void initializeServer(String guildId, String[] joinValues) {
         // add new row and set welcome message, welcome image, and welcome image message
+        String url = "jdbc:mysql://localhost:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8";
+        String username = "java";
+        String password = "password";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("INSERT INTO welcome (`guild_id`, `welcome_message`, `welcome_image`, `welcome_image_message`) VALUES ('" + guildId + "', '" + joinValues[0] + "', '" + joinValues[1] + "', '" + joinValues[2] + "')");
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot connect the database!", e);
+        }
+
+    }
+
+    public static void closeServer(String guildId) {
+
+    }
+
+    public static void closeChannel(String channelId) {
+
     }
 
     public static void resetServer(String guildId) {
-        // delete row and re-initialize server
+        // delete rows and re-initialize server
     }
+
 
     public static String[] getWelcomeInfo(String guildId) {
         String[] result = new String[4];
@@ -88,7 +108,7 @@ public class MySQLAdapter {
         }
     }
 
-    public static void createReactionRoleMessage(ArrayList<String[]> reactionRoles) {
+    public static void createReactionRoleMessage(String guildId, String channelId, ArrayList<String[]> reactionRoles) {
         String url = "jdbc:mysql://localhost:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8";
         String username = "java";
         String password = "password";
@@ -96,7 +116,7 @@ public class MySQLAdapter {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             Statement statement = connection.createStatement();
             for (String[] a : reactionRoles)
-                statement.executeUpdate("INSERT INTO reaction_role (`message_id`, `reaction`, `role_id`) VALUES ('" + a[0] + "', '" + a[1] + "', '" + a[2] + "')");
+                statement.executeUpdate("INSERT INTO reaction_role (`message_id`, `reaction`, `role_id`, `guild_id`, `channel_id`) VALUES ('" + a[0] + "', '" + a[1] + "', '" + a[2] + "', '" + guildId + "', '" + channelId + "')");
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         }
@@ -113,6 +133,19 @@ public class MySQLAdapter {
             if (rs.next())
                 return rs.getString("role_id");
             return null;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot connect the database!", e);
+        }
+    }
+
+    public static void deleteReactionRoleMessage(String messageId) {
+        String url = "jdbc:mysql://localhost:3306/kirbybase";
+        String username = "java";
+        String password = "password";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("DELETE FROM reaction_role WHERE message_id = " + messageId);
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         }

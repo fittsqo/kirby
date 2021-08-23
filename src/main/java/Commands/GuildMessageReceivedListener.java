@@ -1,7 +1,7 @@
 package Commands;
 
 import DB.MySQLAdapter;
-import com.vdurmont.emoji.EmojiManager;
+import com.vdurmont.emoji.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -16,8 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,10 +97,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         temp = contents[1].substring(2, contents[1].length() - 1);
                         if (eventGuild.getTextChannelById(temp) != null) {
                             // if text channel exists in the server
-                            mb.append("found text channel: <#").append(temp).append(">\n");
                             textChannel = eventGuild.getTextChannelById(temp);
                             LinkedHashSet<String> emotesLh = new LinkedHashSet<>();
-                            ArrayList<String> roles = new ArrayList<>();
+                            LinkedHashSet<String> rolesLh = new LinkedHashSet<>();
 
                             // being parsing all the arguments in the command
                             boolean looping = true;
@@ -111,30 +108,32 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 if (EmojiManager.isEmoji(contents[i])) {
                                     // if arg is an emoji
                                     emotesLh.add(contents[i]);
-                                    mb.append("found emoji: ").append(contents[i]).append("\n");
-                                } else if (Pattern.matches(Message.MentionType.EMOTE.getPattern().toString(), contents[i])) {
+                                }
+                                else if (Pattern.matches(Message.MentionType.EMOTE.getPattern().toString(), contents[i])) {
                                     // if arg is in custom emote pattern
                                     temp = contents[i].replaceAll("^.*(?=:)", "");
                                     temp = temp.substring(1, temp.length() - 1);
                                     if (eventGuild.getEmoteById(temp) != null) {
                                         // if arg is a custom emote in the server
-                                        mb.append("found custom emote: ").append(Objects.requireNonNull(eventGuild.getEmoteById(temp)).getAsMention()).append("\n");
                                         emotesLh.add(temp);
                                     } else {
-                                        mb.append("fail: emote not found!\n");
+                                        mb.append("emote not found!\n");
                                     }
-                                } else if (Pattern.matches(Message.MentionType.ROLE.getPattern().toString(), contents[i])) {
+                                }
+                                else if (Pattern.matches(Message.MentionType.ROLE.getPattern().toString(), contents[i])) {
                                     // if arg is following role mention pattern
                                     temp = contents[i].substring(3, contents[i].length() - 1);
                                     if (eventGuild.getRoleById(temp) != null) {
                                         // if arg is a role in the server
-                                        mb.append("found role: <@&").append(temp).append(">\n");
-                                        if (eventGuild.getSelfMember().getRoles().get(0).canInteract(Objects.requireNonNull(eventGuild.getRoleById(temp)))) {
-                                            mb.append("have perms to give role!\n");
-                                            roles.add(temp);
-                                        } else mb.append("fail: dont have perms to give role!\n");
+                                        if (!rolesLh.contains(temp)) {
+                                            if (eventGuild.getSelfMember().getRoles().get(0).canInteract(Objects.requireNonNull(eventGuild.getRoleById(temp)))) {
+                                                rolesLh.add(temp);
+                                            } else mb.append("i dont have perms to give this role!\n");
+                                        } else {
+                                            mb.append("each role should be unique!\n");
+                                        }
                                     } else {
-                                        mb.append("fail: mentioned role not found!\n");
+                                        mb.append("i couldnt find that mentioned role!\n");
                                     }
                                 } else {
                                     looping = false;
@@ -146,8 +145,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                             }
 
                             ArrayList<String> emotes = new ArrayList<>(emotesLh);
+                            ArrayList<String> roles = new ArrayList<>(rolesLh);
 
-                            if (emotesLh.size() == roles.size()) {
+                            if (emotes.size() == roles.size()) {
                                 // if same number of emotes and roles in message (1 emote maps to 1 reaction)
 
                                 Pattern p = Pattern.compile("\"([^\"]*)\"");
@@ -156,10 +156,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 // get the message text from the command
                                 if (m.find()) {
                                     temp = m.group().replaceAll("\"", "");
-                                    mb.append("found message: ").append(temp).append("\n");
                                 } else {
                                     temp = "this is supposed to be a reaction roles message...";
-                                    mb.append("warn: no message found!\n");
+                                    mb.append("you didnt want to include a message?\n");
                                 }
 
                                 ArrayList<String[]> reactionRoles = new ArrayList<>();
@@ -167,30 +166,33 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 assert textChannel != null;
                                 textChannel.sendMessage(temp).queue(t -> {
                                     for (int j = 0; j < roles.size(); j++) {
-                                        if (EmojiManager.isEmoji(emotes.get(j)))
+                                        if (EmojiManager.isEmoji(emotes.get(j))) {
                                             t.addReaction(emotes.get(j)).queue();
-                                        else
+                                            emotes.set(j, "U+" + Integer.toHexString(emotes.get(j).codePointAt(0)));
+                                        }
+                                        else {
                                             t.addReaction(Objects.requireNonNull(eventGuild.getEmoteById(emotes.get(j)))).queue();
+                                        }
                                         reactionRoles.add(new String[]{
                                                 t.getId(), emotes.get(j), roles.get(j)
                                         });
                                     }
-                                    // TODO for some reason, SQL cant differentiate emojis sometimes (primary key error)
-                                    MySQLAdapter.createReactionRoleMessage(reactionRoles);
+                                    MySQLAdapter.createReactionRoleMessage(eventGuild.getId(), textChannel.getId(), reactionRoles);
                                 });
 
                             } else {
                                 // more emotes than reactions, or vice versa
-                                mb.append("fail: different number of emotes and reactions!\n");
+                                mb.append("different number of working emotes and roles!\n");
                             }
                         } else {
                             // not valid channel
-                            mb.append("fail: text channel not found!\n");
+                            mb.append("i couldnt find that text channel!\n");
                         }
                     } else {
-                        mb.append("fail: text channel missing!\n");
+                        mb.append("you forgot to include the text channel! (use #channel)\n");
                     }
-                    event.getChannel().sendMessage(mb.build()).queue();
+                    if (!mb.isEmpty())
+                        event.getChannel().sendMessage(mb.build()).queue();
                     break;
                 }
         }

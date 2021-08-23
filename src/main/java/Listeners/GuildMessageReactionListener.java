@@ -1,8 +1,7 @@
 package Listeners;
 
 import DB.MySQLAdapter;
-import com.vdurmont.emoji.EmojiManager;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -15,33 +14,36 @@ public class GuildMessageReactionListener extends ListenerAdapter {
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
         String reactionId;
         String roleId;
+        Role role;
 
         if (event.getReactionEmote().isEmoji())
-            reactionId = event.getReactionEmote().getEmoji();
+            reactionId = ("U+" + Integer.toHexString(event.getReactionEmote().getEmoji().codePointAt(0)));
         else
             reactionId = event.getReactionEmote().getId();
 
         roleId = MySQLAdapter.getReactionRole(event.getMessageId(), reactionId);
-
-        event.retrieveMember().queue();
-        if (roleId != null)
-            event.getGuild().addRoleToMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(roleId))).queue();
+        if (roleId != null) {
+            role = event.getGuild().getRoleById(roleId);
+            if (role != null)
+                event.getGuild().addRoleToMember(event.getUserId(), (role)).queue();
+        }
     }
 
     public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
         String reactionId;
         String roleId;
+        Role role;
 
         if (event.getReactionEmote().isEmoji())
-            reactionId = event.getReactionEmote().getEmoji();
+            reactionId = ("U+" + Integer.toHexString(event.getReactionEmote().getEmoji().codePointAt(0)));
         else
             reactionId = event.getReactionEmote().getId();
 
         roleId = MySQLAdapter.getReactionRole(event.getMessageId(), reactionId);
-
-        // TODO: learn how to retrieve members
-
-        if (roleId != null)
-            event.getGuild().removeRoleFromMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(roleId))).queue();
+        if (roleId != null) {
+            role = event.getGuild().getRoleById(roleId);
+            if (role != null)
+                event.getGuild().removeRoleFromMember(event.getUserId(), (role)).queue();
+        }
     }
 }

@@ -54,14 +54,12 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 drawTopRectangle(g2d);
 
                 String welcomeMessage = (welcomeInfo[1]
-                        .replaceAll("'", "")
-                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
+                        .replaceAll("%user_id%", "<@" + event.getUser().getId() + ">")
                         .replaceAll("%user_name%", event.getUser().getName())
                         .replaceAll("%guild_name%", event.getGuild().getName()));
 
                 String welcomeImageMessage = welcomeInfo[3]
-                        .replaceAll("'", "")
-                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
+                        .replaceAll("%user_id%", "<@" + event.getUser().getId() + ">")
                         .replaceAll("%user_name%", event.getUser().getName())
                         .replaceAll("%guild_name%", event.getGuild().getName())
                         .replaceAll("%user_tag%", event.getUser().getAsTag());
