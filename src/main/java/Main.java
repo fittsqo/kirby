@@ -1,4 +1,6 @@
 import Commands.GuildMessageReceivedListener;
+import DB.DBAdapter;
+import DB.DSource;
 import Listeners.*;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -18,7 +20,12 @@ public class Main {
 
         JDABuilder jda = JDABuilder.createDefault(args[0]);
 
-        jda.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
+        jda.disableCache(
+                CacheFlag.MEMBER_OVERRIDES,
+                CacheFlag.VOICE_STATE,
+                CacheFlag.ACTIVITY,
+                CacheFlag.ONLINE_STATUS
+        );
         jda.setBulkDeleteSplittingEnabled(false);
         jda.setActivity(Activity.watching("the stars"));
         jda.addEventListeners(
