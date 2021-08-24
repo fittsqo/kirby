@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 public class GuildMessageReactionListener extends ListenerAdapter {
 
+    @Override
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
         String reactionId;
         String roleId;
@@ -28,6 +29,7 @@ public class GuildMessageReactionListener extends ListenerAdapter {
         }
     }
 
+    @Override
     public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
         String reactionId;
         String roleId;
@@ -45,4 +47,5 @@ public class GuildMessageReactionListener extends ListenerAdapter {
                 event.getGuild().removeRoleFromMember(event.getUserId(), (role)).queue();
         }
     }
+
 }

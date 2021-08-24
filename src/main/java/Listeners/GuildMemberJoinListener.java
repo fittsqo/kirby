@@ -23,6 +23,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
     private final int PFP_DIM = 512; // image will be scaled to this anyways...
     private final int MARGIN = 30;
 
+    @Override
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
         String[] welcomeInfo = DBAdapter.getWelcomeInfo(event.getGuild().getId());
         if (welcomeInfo[0] != null) { // if the welcome message is set
@@ -34,7 +35,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 BufferedImage pfp = new BufferedImage(PFP_DIM, PFP_DIM, TYPE_INT_RGB);
                 BufferedImage rawPfp = ImageIO.read(new URL(user.getEffectiveAvatarUrl() + "?size=" + PFP_DIM));
 
-                int welcomeImageId = Integer.parseInt(welcomeInfo[2].replaceAll("'", ""));
+                int welcomeImageId = Integer.parseInt(welcomeInfo[2]);
 
                 String BG_PATH = "src/main/resources/images/welcome_blank_" + welcomeImageId + ".jpg";
                 BufferedImage background = ImageIO.read(new File(BG_PATH));
@@ -54,19 +55,20 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 drawTopRectangle(g2d);
 
                 String welcomeMessage = (welcomeInfo[1]
-                        .replaceAll("%user_id%", "<@" + event.getUser().getId() + ">")
+                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
                         .replaceAll("%user_name%", event.getUser().getName())
+                        .replaceAll("%user_tag%", event.getUser().getAsTag())
                         .replaceAll("%guild_name%", event.getGuild().getName()));
 
                 String welcomeImageMessage = welcomeInfo[3]
-                        .replaceAll("%user_id%", "<@" + event.getUser().getId() + ">")
+                        .replaceAll("%user_mention%", "<@" + event.getUser().getId() + ">")
                         .replaceAll("%user_name%", event.getUser().getName())
-                        .replaceAll("%guild_name%", event.getGuild().getName())
-                        .replaceAll("%user_tag%", event.getUser().getAsTag());
+                        .replaceAll("%user_tag%", event.getUser().getAsTag())
+                        .replaceAll("%guild_name%", event.getGuild().getName());
 
                 int TITLE_FONT_SIZE = 80;
                 drawCenteredString(g2d, welcomeImageMessage,
-                        BG_HEIGHT * 83 / 100, new Font("coolvetica rg", Font.PLAIN, TITLE_FONT_SIZE));
+                        BG_HEIGHT * 82 / 100, new Font("coolvetica rg", Font.PLAIN, TITLE_FONT_SIZE));
                 int SUBTITLE_FONT_SIZE = 50;
                 drawCenteredString(g2d, "member #" + event.getGuild().getMemberCount(),
                         BG_HEIGHT * 88 / 100, new Font("coolvetica rg", Font.PLAIN, SUBTITLE_FONT_SIZE));
@@ -76,7 +78,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
                 else
                     pfp.getGraphics().drawImage(rawPfp, 0, 0, null);
 
-                drawCenteredImage(g2d, pfp, (BG_HEIGHT - pfp.getHeight()) * 40 / 100);
+                drawCenteredImage(g2d, pfp, (BG_HEIGHT - pfp.getHeight()) * 38 / 100);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(background, "jpg", baos);
@@ -111,9 +113,9 @@ public class GuildMemberJoinListener extends ListenerAdapter {
         Color color = new Color(255, 255, 255, 255);
         g2d.setStroke(new BasicStroke(20));
         g2d.setColor(color);
-        int x = (BG_WIDTH - pfp.getWidth()) / 2;
-        g2d.drawArc(BG_WIDTH/2-256, foregroundHeight, PFP_DIM, PFP_DIM, 0, 360);
-        g2d.setClip(new Ellipse2D.Double((double)BG_WIDTH/2-256, foregroundHeight, PFP_DIM, PFP_DIM));
+        int x = (BG_WIDTH - PFP_DIM) / 2;
+        g2d.drawArc((BG_WIDTH - PFP_DIM) / 2, foregroundHeight, PFP_DIM, PFP_DIM, 0, 360);
+        g2d.setClip(new Ellipse2D.Double((BG_WIDTH - (double)PFP_DIM) / 2, foregroundHeight, PFP_DIM, PFP_DIM));
         g2d.drawImage(pfp, x, foregroundHeight, null);
     }
 
@@ -122,4 +124,5 @@ public class GuildMemberJoinListener extends ListenerAdapter {
         g2d.setColor(color);
         g2d.fillRect(MARGIN, MARGIN, BG_WIDTH - (2 * MARGIN), BG_HEIGHT - (2 * MARGIN));
     }
+
 }

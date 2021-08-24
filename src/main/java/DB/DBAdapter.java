@@ -11,7 +11,7 @@ public class DBAdapter {
         String password = "password";
 
         String[] joinValues = new String[3];
-        joinValues[0] = "hi %user_id% <3 welcome to %guild_name% :)";
+        joinValues[0] = "hi %user_mention% <3 welcome to %guild_name% :)";
         joinValues[1] = "0";
         joinValues[2] = "%user_tag% joined the server";
 

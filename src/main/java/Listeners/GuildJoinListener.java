@@ -10,8 +10,7 @@ public class GuildJoinListener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(@Nonnull GuildJoinEvent event) {
-
         DBAdapter.initializeServer(event.getGuild().getId());
-
     }
+
 }

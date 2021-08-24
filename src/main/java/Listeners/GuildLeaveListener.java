@@ -11,4 +11,5 @@ public class GuildLeaveListener extends ListenerAdapter {
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
         DBAdapter.closeServer(event.getGuild().getId());
     }
+
 }
