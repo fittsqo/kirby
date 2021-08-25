@@ -20,6 +20,12 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public class GuildMemberJoinListener extends ListenerAdapter {
 
+    private DBAdapter dbAdapter;
+
+    public GuildMemberJoinListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
+    }
+
     private final int BG_WIDTH = 1696;
     private final int BG_HEIGHT = 954;
     private final int PFP_DIM = 512; // image will be scaled to this anyways...
@@ -27,7 +33,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
-        String[] welcomeInfo = DBAdapter.getWelcomeInfo(event.getGuild().getId());
+        String[] welcomeInfo = dbAdapter.getWelcomeInfo(event.getGuild().getId());
         if (welcomeInfo[0] != null) { // if the welcome message is set
             User user = event.getUser();
             try {

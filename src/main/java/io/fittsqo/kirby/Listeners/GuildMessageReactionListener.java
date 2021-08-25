@@ -10,6 +10,12 @@ import javax.annotation.Nonnull;
 
 public class GuildMessageReactionListener extends ListenerAdapter {
 
+    private DBAdapter dbAdapter;
+
+    public GuildMessageReactionListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
+    }
+
     @Override
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
         String reactionId;
@@ -21,7 +27,7 @@ public class GuildMessageReactionListener extends ListenerAdapter {
         else
             reactionId = event.getReactionEmote().getId();
 
-        roleId = DBAdapter.getReactionRole(event.getMessageId(), reactionId);
+        roleId = dbAdapter.getReactionRole(event.getMessageId(), reactionId);
         if (roleId != null) {
             role = event.getGuild().getRoleById(roleId);
             if (role != null)
@@ -40,7 +46,7 @@ public class GuildMessageReactionListener extends ListenerAdapter {
         else
             reactionId = event.getReactionEmote().getId();
 
-        roleId = DBAdapter.getReactionRole(event.getMessageId(), reactionId);
+        roleId = dbAdapter.getReactionRole(event.getMessageId(), reactionId);
         if (roleId != null) {
             role = event.getGuild().getRoleById(roleId);
             if (role != null)

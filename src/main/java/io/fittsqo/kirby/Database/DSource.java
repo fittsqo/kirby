@@ -8,15 +8,19 @@ import java.sql.SQLException;
 
 public class DSource {
 
-    private static final HikariConfig config = new HikariConfig();
+    private final HikariConfig config = new HikariConfig();
+    private final String username;
+    private final String password;
 
-    static {
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8");
-        config.setUsername("java");
-        config.setPassword("password");
+    public DSource(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
+        config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8");
+        config.setUsername(username);
+        config.setPassword(password);
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

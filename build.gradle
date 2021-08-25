@@ -27,3 +27,9 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+shadowJar {
+    manifest {
+        attributes 'Main-Class': 'io.fittsqo.kirby.Main'
+    }
+}

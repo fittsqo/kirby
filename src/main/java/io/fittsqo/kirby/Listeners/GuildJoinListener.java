@@ -8,9 +8,15 @@ import javax.annotation.Nonnull;
 
 public class GuildJoinListener extends ListenerAdapter {
 
+    private DBAdapter dbAdapter;
+
+    public GuildJoinListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
+    }
+
     @Override
     public void onGuildJoin(@Nonnull GuildJoinEvent event) {
-        DBAdapter.initializeServer(event.getGuild().getId());
+        dbAdapter.initializeServer(event.getGuild().getId());
     }
 
 }

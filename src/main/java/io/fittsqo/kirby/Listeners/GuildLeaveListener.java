@@ -7,9 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class GuildLeaveListener extends ListenerAdapter {
 
+    private DBAdapter dbAdapter;
+
+    public GuildLeaveListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
+    }
+
     @Override
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
-        DBAdapter.closeServer(event.getGuild().getId());
+        dbAdapter.closeServer(event.getGuild().getId());
     }
 
 }

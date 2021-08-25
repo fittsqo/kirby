@@ -8,9 +8,15 @@ import javax.annotation.Nonnull;
 
 public class GuildMessageDeleteListener extends ListenerAdapter {
 
+    private DBAdapter dbAdapter;
+
+    public GuildMessageDeleteListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
+    }
+
     @Override
     public void onGuildMessageDelete (@Nonnull GuildMessageDeleteEvent event) {
-        DBAdapter.deleteReactionRoleMessage(event.getMessageId());
+        dbAdapter.deleteReactionRoleMessage(event.getMessageId());
     }
 
 }

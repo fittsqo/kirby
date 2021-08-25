@@ -24,6 +24,12 @@ import java.util.regex.Pattern;
 
 public class GuildMessageReceivedListener extends ListenerAdapter {
 
+    private DBAdapter dbAdapter;
+
+    public GuildMessageReceivedListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
+    }
+
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         JDA jda = event.getJDA();
@@ -53,7 +59,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         if (Pattern.matches(Message.MentionType.CHANNEL.getPattern().toString(), contents[1])) {
                             temp = contents[1].substring(2, contents[1].length() - 1);
                             if (event.getGuild().getTextChannelById(temp) != null) {
-                                DBAdapter.setWelcomeChannel(event.getGuild().getId(), temp);
+                                dbAdapter.setWelcomeChannel(event.getGuild().getId(), temp);
                                 event.getChannel().sendMessage("welcome channel set: <#" + temp + ">").queue();
                             }
                         }
@@ -67,7 +73,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
                         if (rawMessage.length() < 2019) {
-                            DBAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
+                            dbAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
                             event.getChannel().sendMessage("welcome message set!").queue();
                         } else event.getChannel().sendMessage("welcome message must be less than 2000 characters!").queue();
                     } else event.getChannel().sendMessage("u need to add a welcome message!").queue();
@@ -78,7 +84,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
                         if (Files.exists(Path.of("src/main/resources/images/welcome_blank_" + contents[1] + ".jpg"))) {
-                            DBAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
+                            dbAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
                             event.getChannel().sendMessage("welcome image id set!").queue();
                         } else
                             event.getChannel().sendMessage("invalid image id! (only 1 and 0 are currently supported)").queue();
@@ -91,7 +97,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
                         if (rawMessage.length() < 64) {
-                            DBAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
+                            dbAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
                             event.getChannel().sendMessage("welcome image message set!").queue();
                         } else event.getChannel().sendMessage("welcome image message must be less than 40 characters!").queue();
                     } else event.getChannel().sendMessage("add a welcome image message!").queue();
@@ -184,7 +190,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                                             t.getId(), emotes.get(j), roles.get(j)
                                                     });
                                                 }
-                                                DBAdapter.createReactionRoleMessage(eventGuild.getId(), textChannel.getId(), reactionRoles);
+                                                dbAdapter.createReactionRoleMessage(eventGuild.getId(), textChannel.getId(), reactionRoles);
                                                 mb.append("reaction role message sent!\n");
                                             });
                                         } else {
@@ -215,7 +221,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                 }
                 break;
             case ("!reset"):
-                DBAdapter.resetServer(event.getGuild().getId());
+                dbAdapter.resetServer(event.getGuild().getId());
                 event.getChannel().sendMessage("reset all server settings (including reaction roles and welcome channel)!").queue();
                 break;
         }

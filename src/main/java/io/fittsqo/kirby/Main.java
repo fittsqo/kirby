@@ -1,6 +1,7 @@
 package io.fittsqo.kirby;
 
 import io.fittsqo.kirby.Commands.GuildMessageReceivedListener;
+import io.fittsqo.kirby.Database.DBAdapter;
 import io.fittsqo.kirby.Listeners.*;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -13,12 +14,13 @@ public class Main {
 
     public static void main(String[] args) throws LoginException {
 
-        if (args.length < 1) {
-            System.out.println("You have to provide a token as first argument!");
+        if (args.length < 3) {
+            System.out.println("You have to provide the bot token, SQL username, and SQL password!");
             System.exit(1);
         }
 
         JDABuilder jda = JDABuilder.createDefault(args[0]);
+        DBAdapter dbAdapter = new DBAdapter(args[1], args[2]);
 
         jda.disableCache(
                 CacheFlag.MEMBER_OVERRIDES,
@@ -30,13 +32,13 @@ public class Main {
         jda.setActivity(Activity.watching("the stars"));
         jda.addEventListeners(
                 new ReadyListener(),
-                new GuildMemberJoinListener(),
-                new GuildMessageReactionListener(),
-                new GuildMessageReceivedListener(),
-                new GuildJoinListener(),
-                new GuildMessageDeleteListener(),
-                new GuildLeaveListener(),
-                new TextChannelDeleteListener()
+                new GuildMemberJoinListener(dbAdapter),
+                new GuildMessageReactionListener(dbAdapter),
+                new GuildMessageReceivedListener(dbAdapter),
+                new GuildJoinListener(dbAdapter),
+                new GuildMessageDeleteListener(dbAdapter),
+                new GuildLeaveListener(dbAdapter),
+                new TextChannelDeleteListener(dbAdapter)
         );
         jda.enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
