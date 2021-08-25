@@ -1,6 +1,6 @@
-package Commands;
+package io.fittsqo.kirby.Commands;
 
-import DB.DBAdapter;
+import io.fittsqo.kirby.Database.DBAdapter;
 import com.vdurmont.emoji.EmojiManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;

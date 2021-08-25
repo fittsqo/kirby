@@ -1,4 +1,4 @@
-package DB;
+package io.fittsqo.kirby.Database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

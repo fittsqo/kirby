@@ -1,6 +1,6 @@
-package Listeners;
+package io.fittsqo.kirby.Listeners;
 
-import DB.DBAdapter;
+import io.fittsqo.kirby.Database.DBAdapter;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

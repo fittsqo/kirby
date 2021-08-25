@@ -1,6 +1,6 @@
-package Listeners;
+package io.fittsqo.kirby.Listeners;
 
-import DB.DBAdapter;
+import io.fittsqo.kirby.Database.DBAdapter;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;

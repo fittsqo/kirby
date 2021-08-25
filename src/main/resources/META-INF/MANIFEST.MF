@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Main-Class: io.fittsqo.kirby.Main
+Class-Path: okhttp-3.13.0.jar json-20170516.jar junit-platform-engine-1.
+ 7.2.jar opus-java-api-1.1.0.jar mysql-connector-java-8.0.26.jar protobu
+ f-java-3.11.4.jar emoji-java-5.1.1.jar JDA-4.3.0_309.jar commons-collec
+ tions4-4.1.jar nv-websocket-client-2.14.jar junit-platform-commons-1.7.
+ 2.jar opentest4j-1.2.0.jar HikariCP-5.0.0.jar slf4j-api-1.7.31.jar jack
+ son-annotations-2.10.1.jar opus-java-natives-1.1.0.jar trove4j-3.0.3.ja
+ r jna-4.4.0.jar annotations-16.0.1.jar jackson-databind-2.10.1.jar apig
+ uardian-api-1.1.0.jar logback-core-1.2.5.jar junit-jupiter-engine-5.7.2
+ .jar jsr305-3.0.2.jar logback-classic-1.2.5.jar okio-1.17.2.jar junit-j
+ upiter-api-5.7.2.jar jackson-core-2.10.1.jar
+

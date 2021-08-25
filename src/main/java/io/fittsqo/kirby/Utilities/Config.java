@@ -1,4 +1,4 @@
-package Utilities;
+package io.fittsqo.kirby.Utilities;
 
 public class Config {
 

@@ -1,6 +1,6 @@
-package Listeners;
+package io.fittsqo.kirby.Listeners;
 
-import DB.DBAdapter;
+import io.fittsqo.kirby.Database.DBAdapter;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;

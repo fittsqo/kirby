@@ -1,7 +1,7 @@
-import Commands.GuildMessageReceivedListener;
-import DB.DBAdapter;
-import DB.DSource;
-import Listeners.*;
+package io.fittsqo.kirby;
+
+import io.fittsqo.kirby.Commands.GuildMessageReceivedListener;
+import io.fittsqo.kirby.Listeners.*;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;

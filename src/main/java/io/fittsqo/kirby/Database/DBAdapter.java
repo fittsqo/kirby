@@ -1,6 +1,6 @@
-package DB;
+package io.fittsqo.kirby.Database;
 
-import Utilities.Config;
+import io.fittsqo.kirby.Utilities.Config;
 
 import java.sql.*;
 import java.util.ArrayList;
