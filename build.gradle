@@ -33,3 +33,11 @@ shadowJar {
         attributes 'Main-Class': 'io.fittsqo.kirby.Main'
     }
 }
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources"
+        }
+    }
+}

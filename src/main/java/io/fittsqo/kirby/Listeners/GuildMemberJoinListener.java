@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
 
@@ -38,15 +39,23 @@ public class GuildMemberJoinListener extends ListenerAdapter {
             User user = event.getUser();
             try {
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/fonts/coolvetica rg.ttf")));
+
+                InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("fonts/coolvetica rg.ttf");
+
+                Font font;
+                if (stream != null) {
+                    font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(48f);
+                    ge.registerFont(font);
+                }
 
                 BufferedImage pfp = new BufferedImage(PFP_DIM, PFP_DIM, TYPE_INT_RGB);
                 BufferedImage rawPfp = ImageIO.read(new URL(user.getEffectiveAvatarUrl() + "?size=" + PFP_DIM));
 
                 int welcomeImageId = Integer.parseInt(welcomeInfo[2]);
 
-                String BG_PATH = "src/main/resources/images/welcome_blank_" + welcomeImageId + ".jpg";
-                BufferedImage background = ImageIO.read(new File(BG_PATH));
+                String BG_PATH = "images/welcome_blank_" + welcomeImageId + ".jpg";
+                stream = ClassLoader.getSystemClassLoader().getResourceAsStream(BG_PATH);
+                BufferedImage background = ImageIO.read(stream);
                 if (background.getHeight() != BG_HEIGHT || background.getWidth() != BG_WIDTH) return;
 
                 Graphics2D g2d = background.createGraphics();

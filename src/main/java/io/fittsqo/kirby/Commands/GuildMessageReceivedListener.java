@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class GuildMessageReceivedListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public GuildMessageReceivedListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;
@@ -47,8 +47,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
             case "!simwelcome":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     ((JDAImpl) jda).handleEvent(new GuildMemberJoinEvent(jda, jda.getResponseTotal(), Objects.requireNonNull(event.getMember())));
-                    event.getChannel().sendMessage("simulated welcome message. if the message did not show up, try " +
-                            "!setwelcomechannel #channel, and then run the command again.").queue();
+                    event.getChannel().sendMessage("simulated welcome message! if the message did not show up, try " +
+                            "!setwelcomechannel [#channel], and then run the command again.").queue();
                 }
                 break;
 
@@ -63,9 +63,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 event.getChannel().sendMessage("welcome channel set: <#" + temp + ">").queue();
                             }
                         }
-                        else event.getChannel().sendMessage("channel does not exist!").queue();
+                        else event.getChannel().sendMessage("channel does not exist.").queue();
                     }
-                    else event.getChannel().sendMessage("welcome channel not specified! (use #channel after the command)").queue();
+                    else event.getChannel().sendMessage("welcome channel not specified, try !setwelcomechannel [#channel].").queue();
                 }
                 break;
 
@@ -75,8 +75,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         if (rawMessage.length() < 2019) {
                             dbAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
                             event.getChannel().sendMessage("welcome message set!").queue();
-                        } else event.getChannel().sendMessage("welcome message must be less than 2000 characters!").queue();
-                    } else event.getChannel().sendMessage("u need to add a welcome message!").queue();
+                        } else event.getChannel().sendMessage("welcome message must be less than 2000 characters.").queue();
+                    } else event.getChannel().sendMessage("welcome message not specified, try !setwelcomemessage [message].").queue();
                 }
                 break;
 
@@ -87,8 +87,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                             dbAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
                             event.getChannel().sendMessage("welcome image id set!").queue();
                         } else
-                            event.getChannel().sendMessage("invalid image id! (only 1 and 0 are currently supported)").queue();
-                    } else event.getChannel().sendMessage("specify which image to set! (0 or 1)").queue();
+                            event.getChannel().sendMessage("invalid image id, try !setwelcomeimage [#].").queue();
+                    } else event.getChannel().sendMessage("specify which image to set with !setwelcomeimage [#].").queue();
 
                 }
                 break;
@@ -99,8 +99,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         if (rawMessage.length() < 64) {
                             dbAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
                             event.getChannel().sendMessage("welcome image message set!").queue();
-                        } else event.getChannel().sendMessage("welcome image message must be less than 40 characters!").queue();
-                    } else event.getChannel().sendMessage("add a welcome image message!").queue();
+                        } else event.getChannel().sendMessage("welcome image message must be less than 40 characters.").queue();
+                    } else event.getChannel().sendMessage("welcome image message not specified, try !setwelcomeimagemessage [message].").queue();
                 }
                 break;
 
@@ -136,7 +136,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                             // if arg is a custom emote in the server
                                             emotesLh.add(temp);
                                         } else {
-                                            mb.append("emote not found!\n");
+                                            mb.append("emote not found.\n");
                                         }
                                     } else if (Pattern.matches(Message.MentionType.ROLE.getPattern().toString(), contents[i])) {
                                         // if arg is following role mention pattern
@@ -146,12 +146,12 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                             if (!rolesLh.contains(temp)) {
                                                 if (eventGuild.getSelfMember().getRoles().get(0).canInteract(Objects.requireNonNull(eventGuild.getRoleById(temp)))) {
                                                     rolesLh.add(temp);
-                                                } else mb.append("i dont have perms to give this role!\n");
+                                                } else mb.append("i dont have perms to give a role.\n");
                                             } else {
-                                                mb.append("each role should be unique!\n");
+                                                mb.append("each role should be unique.\n");
                                             }
                                         } else {
-                                            mb.append("i couldnt find that mentioned role!\n");
+                                            mb.append("i couldnt find a mentioned role.\n");
                                         }
                                     } else {
                                         looping = false;
@@ -194,27 +194,27 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                                 mb.append("reaction role message sent!\n");
                                             });
                                         } else {
-                                            mb.append("you must specify a message after the roles and reactions in quotes\n");
+                                            mb.append("you must specify a message after the roles and reactions in quotes.\n");
                                         }
 
                                     } else {
                                         // more emotes than reactions, or vice versa
-                                        mb.append("you need to specify same number of emotes and roles!\n");
+                                        mb.append("you need to specify same number of emotes and roles.\n");
                                     }
                                 } else {
                                     // no emotes and
-                                    mb.append("you need at least 1 valid emote and role!\n");
+                                    mb.append("you need at least 1 valid emote and role.\n");
                                 }
                             } else {
                                 // not valid channel
-                                mb.append("i couldnt find that text channel!\n");
+                                mb.append("i couldnt find that text channel.\n");
                             }
                         } else {
-                            mb.append("you forgot to include the text channel! (use #channel)\n");
+                            mb.append("specify the text #channel after the command, try !createrolemessage #channel.)\n");
                         }
                     }
                     else {
-                        mb.append("specify the text #channel after the command!");
+                        mb.append("specify the text #channel after the command, try !createrolemessage #channel");
                     }
                     if (!mb.isEmpty())
                         event.getChannel().sendMessage(mb.build()).queue();

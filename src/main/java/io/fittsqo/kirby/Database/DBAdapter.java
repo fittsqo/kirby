@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class DBAdapter {
 
-    DSource dSource;
+    private final DSource dSource;
 
     public DBAdapter(String username, String password) {
         dSource = new DSource(username, password);
@@ -71,6 +71,7 @@ public class DBAdapter {
             PreparedStatement ps = conn.prepareStatement("UPDATE welcome SET welcome_channel = ? WHERE guild_id = ?");
             ps.setString(1, channelId);
             ps.setString(2, guildId);
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         }
@@ -103,6 +104,7 @@ public class DBAdapter {
             PreparedStatement ps = conn.prepareStatement("UPDATE welcome SET welcome_image_message = ? WHERE guild_id = ?");
             ps.setString(1, welcomeImageMessage);
             ps.setString(2, guildId);
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         }
