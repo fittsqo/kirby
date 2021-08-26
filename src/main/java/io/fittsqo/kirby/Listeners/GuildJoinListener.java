@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 
 public class GuildJoinListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public GuildJoinListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;

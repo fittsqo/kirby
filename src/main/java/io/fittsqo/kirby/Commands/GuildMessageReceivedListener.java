@@ -1,7 +1,7 @@
 package io.fittsqo.kirby.Commands;
 
-import io.fittsqo.kirby.Database.DBAdapter;
 import com.vdurmont.emoji.EmojiManager;
+import io.fittsqo.kirby.Database.DBAdapter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -14,8 +14,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.internal.JDAImpl;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -83,12 +82,13 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
             case "!setwelcomeimage":
                 if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
                     if (contents.length > 1) {
-                        if (Files.exists(Path.of("src/main/resources/images/welcome_blank_" + contents[1] + ".jpg"))) {
+                        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("images/welcome_blank_" + contents[1] + ".jpg");
+                        if (stream != null) {
                             dbAdapter.setWelcomeImage(event.getGuild().getId(), Integer.parseInt(contents[1]));
                             event.getChannel().sendMessage("welcome image id set!").queue();
                         } else
-                            event.getChannel().sendMessage("invalid image id, try !setwelcomeimage [#].").queue();
-                    } else event.getChannel().sendMessage("specify which image to set with !setwelcomeimage [#].").queue();
+                            event.getChannel().sendMessage("invalid image id, try !setwelcomeimage [id].").queue();
+                    } else event.getChannel().sendMessage("specify which image to set with !setwelcomeimage [id].").queue();
 
                 }
                 break;

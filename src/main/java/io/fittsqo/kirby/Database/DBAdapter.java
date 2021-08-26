@@ -151,10 +151,14 @@ public class DBAdapter {
         }
     }
 
-    public void deleteReactionRoleChannel(String channelId) {
+    public void fixChannelRows(String channelId) {
         try (Connection conn = dSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("DELETE FROM reaction_role WHERE channel_id = ?");
             ps.setString(1, channelId);
+            ps.executeUpdate();
+            ps = conn.prepareStatement("UPDATE welcome SET welcome_channel = ? WHERE welcome_channel = ?");
+            ps.setNull(1, Types.VARCHAR);
+            ps.setString(2, channelId);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);

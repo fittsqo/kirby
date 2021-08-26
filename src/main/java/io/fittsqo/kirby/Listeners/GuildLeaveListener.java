@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class GuildLeaveListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public GuildLeaveListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;

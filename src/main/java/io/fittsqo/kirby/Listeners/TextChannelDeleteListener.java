@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TextChannelDeleteListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public TextChannelDeleteListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;
@@ -15,7 +15,7 @@ public class TextChannelDeleteListener extends ListenerAdapter {
 
     @Override
     public void onTextChannelDelete(@NotNull TextChannelDeleteEvent event) {
-        dbAdapter.deleteReactionRoleChannel(event.getChannel().getId());
+        dbAdapter.fixChannelRows(event.getChannel().getId());
     }
 
 }

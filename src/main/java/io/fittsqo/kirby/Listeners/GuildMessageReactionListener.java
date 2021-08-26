@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 public class GuildMessageReactionListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public GuildMessageReactionListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;

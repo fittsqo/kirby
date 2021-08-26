@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,7 +20,7 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public class GuildMemberJoinListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public GuildMemberJoinListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;

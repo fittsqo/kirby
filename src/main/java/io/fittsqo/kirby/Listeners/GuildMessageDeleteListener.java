@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 
 public class GuildMessageDeleteListener extends ListenerAdapter {
 
-    private DBAdapter dbAdapter;
+    private final DBAdapter dbAdapter;
 
     public GuildMessageDeleteListener(DBAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;
