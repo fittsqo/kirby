@@ -1,6 +1,5 @@
 package io.fittsqo.kirby;
 
-import io.fittsqo.kirby.Commands.GuildMessageReceivedListener;
 import io.fittsqo.kirby.Database.DBAdapter;
 import io.fittsqo.kirby.Listeners.*;
 import net.dv8tion.jda.api.JDABuilder;
@@ -19,18 +18,18 @@ public class Main {
             System.exit(1);
         }
 
-        JDABuilder jda = JDABuilder.createDefault(args[0]);
+        JDABuilder jdaBuilder = JDABuilder.createDefault(args[0]);
         DBAdapter dbAdapter = new DBAdapter(args[1], args[2]);
 
-        jda.disableCache(
+        jdaBuilder.disableCache(
                 CacheFlag.MEMBER_OVERRIDES,
                 CacheFlag.VOICE_STATE,
                 CacheFlag.ACTIVITY,
                 CacheFlag.ONLINE_STATUS
         );
-        jda.setBulkDeleteSplittingEnabled(false);
-        jda.setActivity(Activity.watching("the stars"));
-        jda.addEventListeners(
+        jdaBuilder.setBulkDeleteSplittingEnabled(false);
+        jdaBuilder.setActivity(Activity.watching("the stars"));
+        jdaBuilder.addEventListeners(
                 new ReadyListener(),
                 new GuildMemberJoinListener(dbAdapter),
                 new GuildMessageReactionListener(dbAdapter),
@@ -38,15 +37,16 @@ public class Main {
                 new GuildJoinListener(dbAdapter),
                 new GuildMessageDeleteListener(dbAdapter),
                 new GuildLeaveListener(dbAdapter),
-                new TextChannelDeleteListener(dbAdapter)
+                new TextChannelDeleteListener(dbAdapter),
+                new SlashCommandListener()
         );
-        jda.enableIntents(
+        jdaBuilder.enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_MESSAGE_REACTIONS,
                 GatewayIntent.GUILD_EMOJIS
         );
 
-        jda.build();
+        jdaBuilder.build();
     }
 
 }

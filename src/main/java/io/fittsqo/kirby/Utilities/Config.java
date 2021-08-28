@@ -9,4 +9,8 @@ public class Config {
         defaultWelcome[2] = "%user_tag% joined the server";
         return defaultWelcome;
     }
+
+    public static String getTestGuild() {
+        return "876603944061771887";
+    }
 }

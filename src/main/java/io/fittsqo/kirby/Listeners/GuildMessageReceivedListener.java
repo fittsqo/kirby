@@ -1,4 +1,4 @@
-package io.fittsqo.kirby.Commands;
+package io.fittsqo.kirby.Listeners;
 
 import com.vdurmont.emoji.EmojiManager;
 import io.fittsqo.kirby.Database.DBAdapter;
@@ -7,11 +7,11 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.internal.JDAImpl;
 
 import java.io.InputStream;
@@ -38,9 +38,11 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
         String rawMessage = commandMessage.getContentRaw();
         String[] contents = rawMessage.split("[ \n]");
         switch (contents[0]) {
-            case "!ping":
-                MessageChannel channel = event.getChannel();
-                channel.sendMessage("pong!").queue();
+            case "!update":
+                if (event.getAuthor().getId().equals("829860505274417162"))
+                event.getGuild().updateCommands().addCommands(
+                        new CommandData("ping", "testing")
+                        ).queue();
                 break;
 
             case "!simwelcome":
