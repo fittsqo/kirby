@@ -41,7 +41,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
             case "!update":
                 if (event.getAuthor().getId().equals("829860505274417162"))
                 event.getGuild().updateCommands().addCommands(
-                        new CommandData("ping", "testing")
+                        new CommandData("ping", "a simple ping command, mainly for seeing if the bot responds!"),
+                        new CommandData("help", "your own personal help command!")
                         ).queue();
                 break;
 
