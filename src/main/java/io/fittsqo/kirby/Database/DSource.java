@@ -24,6 +24,8 @@ public class DSource {
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setIdleTimeout(28800 - 60);
+        config.setMaxLifetime(28800 - 60);
         HikariDataSource ds = new HikariDataSource(config);
         return ds.getConnection();
     }
