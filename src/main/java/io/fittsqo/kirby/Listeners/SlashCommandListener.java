@@ -22,6 +22,8 @@ public class SlashCommandListener extends ListenerAdapter {
         if (invoker != null)
             if (invoker.hasPermission(command.getPermissions()))
                 command.execute(event);
+            else
+                event.reply("You do not have permission to run this command!").queue();
     }
 
     public void addCommands(SlashCommand... command) {

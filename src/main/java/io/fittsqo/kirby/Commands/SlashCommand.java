@@ -17,9 +17,7 @@ public abstract class SlashCommand {
 
     }
 
-    public void execute(SlashCommandEvent event) {
-
-    }
+    public void execute(SlashCommandEvent event) { }
 
     public String getName() {
         return name;
