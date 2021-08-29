@@ -32,6 +32,10 @@ shadowJar {
     manifest {
         attributes 'Main-Class': 'io.fittsqo.kirby.Main'
     }
+
+    archiveBaseName.set('kirby')
+    archiveClassifier.set('')
+    archiveVersion.set('1.0')
 }
 
 sourceSets {
