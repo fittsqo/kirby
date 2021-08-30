@@ -40,10 +40,11 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
         switch (contents[0]) {
             case "!update":
                 if (event.getAuthor().getId().equals("829860505274417162"))
-                event.getGuild().updateCommands().addCommands(
-                        new CommandData("ping", "a simple ping command, mainly for seeing if the bot responds!"),
-                        new CommandData("help", "your own personal help command!")
-                        ).queue();
+                    event.getGuild().updateCommands().addCommands(
+                            new CommandData("ping", "a simple ping command, mainly for seeing if the bot responds!"),
+                            new CommandData("help", "your own personal help command!"),
+                            new CommandData("reset", "reset all of your server settings!")
+                    ).queue();
                 break;
 
             case "!simwelcome":
@@ -64,10 +65,9 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                                 dbAdapter.setWelcomeChannel(event.getGuild().getId(), temp);
                                 event.getChannel().sendMessage("welcome channel set: <#" + temp + ">").queue();
                             }
-                        }
-                        else event.getChannel().sendMessage("channel does not exist.").queue();
-                    }
-                    else event.getChannel().sendMessage("welcome channel not specified, try !setwelcomechannel [#channel].").queue();
+                        } else event.getChannel().sendMessage("channel does not exist.").queue();
+                    } else
+                        event.getChannel().sendMessage("welcome channel not specified, try !setwelcomechannel [#channel].").queue();
                 }
                 break;
 
@@ -77,8 +77,10 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         if (rawMessage.length() < 2019) {
                             dbAdapter.setWelcomeMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomemessage ", ""));
                             event.getChannel().sendMessage("welcome message set!").queue();
-                        } else event.getChannel().sendMessage("welcome message must be less than 2000 characters.").queue();
-                    } else event.getChannel().sendMessage("welcome message not specified, try !setwelcomemessage [message].").queue();
+                        } else
+                            event.getChannel().sendMessage("welcome message must be less than 2000 characters.").queue();
+                    } else
+                        event.getChannel().sendMessage("welcome message not specified, try !setwelcomemessage [message].").queue();
                 }
                 break;
 
@@ -91,7 +93,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                             event.getChannel().sendMessage("welcome image id set!").queue();
                         } else
                             event.getChannel().sendMessage("invalid image id, try !setwelcomeimage [id].").queue();
-                    } else event.getChannel().sendMessage("specify which image to set with !setwelcomeimage [id].").queue();
+                    } else
+                        event.getChannel().sendMessage("specify which image to set with !setwelcomeimage [id].").queue();
 
                 }
                 break;
@@ -102,8 +105,10 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         if (rawMessage.length() < 64) {
                             dbAdapter.setWelcomeImageMessage(event.getGuild().getId(), rawMessage.replace("!setwelcomeimagemessage ", ""));
                             event.getChannel().sendMessage("welcome image message set!").queue();
-                        } else event.getChannel().sendMessage("welcome image message must be less than 40 characters.").queue();
-                    } else event.getChannel().sendMessage("welcome image message not specified, try !setwelcomeimagemessage [message].").queue();
+                        } else
+                            event.getChannel().sendMessage("welcome image message must be less than 40 characters.").queue();
+                    } else
+                        event.getChannel().sendMessage("welcome image message not specified, try !setwelcomeimagemessage [message].").queue();
                 }
                 break;
 
@@ -215,9 +220,8 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
                         } else {
                             mb.append("specify the text #channel after the command, try !createrolemessage #channel.)\n");
                         }
-                    }
-                    else {
-                        mb.append("specify the text #channel after the command, try !createrolemessage #channel");
+                    } else {
+                        mb.append("specify the text #channel after the command, try !createrolemessage #channel\n");
                     }
                     if (!mb.isEmpty())
                         event.getChannel().sendMessage(mb.build()).queue();

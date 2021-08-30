@@ -38,7 +38,7 @@ public class Main {
                 new GuildMessageDeleteListener(dbAdapter),
                 new GuildLeaveListener(dbAdapter),
                 new TextChannelDeleteListener(dbAdapter),
-                new SlashCommandListener()
+                new SlashCommandListener(dbAdapter)
         );
         jdaBuilder.enableIntents(
                 GatewayIntent.GUILD_MEMBERS,

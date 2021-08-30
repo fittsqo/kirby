@@ -2,7 +2,9 @@ package io.fittsqo.kirby.Listeners;
 
 import io.fittsqo.kirby.Commands.HelpCommand;
 import io.fittsqo.kirby.Commands.PingCommand;
+import io.fittsqo.kirby.Commands.ResetCommand;
 import io.fittsqo.kirby.Commands.SlashCommand;
+import io.fittsqo.kirby.Database.DBAdapter;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,11 +14,14 @@ import java.util.HashMap;
 public class SlashCommandListener extends ListenerAdapter {
 
     private final HashMap<String, SlashCommand> commands = new HashMap<>();
+    DBAdapter dbAdapter;
 
-    public SlashCommandListener() {
+    public SlashCommandListener(DBAdapter dbAdapter) {
+        this.dbAdapter = dbAdapter;
         addCommands(
                 new PingCommand(),
-                new HelpCommand(commands)
+                new HelpCommand(commands),
+                new ResetCommand(dbAdapter)
                 );
     }
 
@@ -28,7 +33,7 @@ public class SlashCommandListener extends ListenerAdapter {
             if (invoker.hasPermission(command.getPermissions()))
                 command.execute(event);
             else
-                event.reply("You do not have permission to run this command!").queue();
+                event.reply("you do not have permission to run this command!").queue();
     }
 
     public void addCommands(SlashCommand... command) {
