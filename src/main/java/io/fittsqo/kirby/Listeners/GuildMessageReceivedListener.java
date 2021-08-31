@@ -2,6 +2,7 @@ package io.fittsqo.kirby.Listeners;
 
 import com.vdurmont.emoji.EmojiManager;
 import io.fittsqo.kirby.Database.DBAdapter;
+import io.fittsqo.kirby.Utilities.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -39,7 +40,7 @@ public class GuildMessageReceivedListener extends ListenerAdapter {
         String[] contents = rawMessage.split("[ \n]");
         switch (contents[0]) {
             case "!update":
-                if (event.getAuthor().getId().equals("829860505274417162"))
+                if (event.getAuthor().getId().equals(Config.getOwner()))
                     event.getGuild().updateCommands().addCommands(
                             new CommandData("ping", "a simple ping command, mainly for seeing if the bot responds!"),
                             new CommandData("help", "your own personal help command!"),

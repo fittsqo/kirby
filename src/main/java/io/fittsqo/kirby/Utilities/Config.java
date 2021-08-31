@@ -13,4 +13,8 @@ public class Config {
     public static String getTestGuild() {
         return "876603944061771887";
     }
+
+    public static String getOwner() {
+        return "829860505274417162";
+    }
 }
