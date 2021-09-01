@@ -10,7 +10,7 @@ public class DBAdapter {
     private final DSource dSource;
 
     public DBAdapter(String username, String password) {
-        dSource = new DSource(username, password);
+        this.dSource = new DSource(username, password);
     }
 
     public void initializeServer(String guildId) {
