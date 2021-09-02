@@ -7,10 +7,14 @@ import java.util.ArrayList;
 
 public class DBAdapter {
 
-    private final DSource dSource;
+    private DSource dSource;
 
-    public DBAdapter(String username, String password) {
-        this.dSource = new DSource(username, password);
+    public static DBAdapter create() {
+        return new DBAdapter();
+    }
+
+    public void addDSource(String username, String password) {
+        this.dSource = DSource.create(username, password);
     }
 
     public void initializeServer(String guildId) {

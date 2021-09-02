@@ -19,7 +19,8 @@ public class Main {
         }
 
         JDABuilder jdaBuilder = JDABuilder.createDefault(args[0]);
-        DBAdapter dbAdapter = new DBAdapter(args[1], args[2]);
+        DBAdapter dbAdapter = DBAdapter.create();
+        dbAdapter.addDSource(args[1], args[2]);
 
         jdaBuilder.disableCache(
                 CacheFlag.MEMBER_OVERRIDES,

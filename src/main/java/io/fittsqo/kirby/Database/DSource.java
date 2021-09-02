@@ -10,7 +10,7 @@ public class DSource {
 
     private final HikariDataSource ds;
 
-    public DSource(String username, String password) {
+    private DSource(String username, String password) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/kirbybase?useUnicode=yes&characterEncoding=UTF-8");
         config.setUsername(username);
@@ -22,6 +22,10 @@ public class DSource {
         config.setIdleTimeout(28800 - 60);
         config.setMaxLifetime(28800 - 60);
         this.ds = new HikariDataSource(config);
+    }
+
+    public static DSource create(String username, String password) {
+        return new DSource(username, password);
     }
 
     public Connection getConnection() throws SQLException {
