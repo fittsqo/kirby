@@ -1,6 +1,7 @@
 package io.fittsqo.kirby.Listeners;
 
 import io.fittsqo.kirby.Database.DBAdapter;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
@@ -18,40 +19,34 @@ public class GuildMessageReactionListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
-        String reactionId;
-        String roleId;
-        Role role;
+        Role role = event.getGuild().getRoleById(getRoleId(event.getReactionEmote(), event.getMessageId()));
 
-        if (event.getReactionEmote().isEmoji())
-            reactionId = ("U+" + Integer.toHexString(event.getReactionEmote().getEmoji().codePointAt(0)));
-        else
-            reactionId = event.getReactionEmote().getId();
+        if (role != null)
+            event.getGuild().addRoleToMember(event.getUserId(), (role)).queue();
 
-        roleId = dbAdapter.getReactionRole(event.getMessageId(), reactionId);
-        if (roleId != null) {
-            role = event.getGuild().getRoleById(roleId);
-            if (role != null)
-                event.getGuild().addRoleToMember(event.getUserId(), (role)).queue();
-        }
     }
 
     @Override
     public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
+        Role role = event.getGuild().getRoleById(getRoleId(event.getReactionEmote(), event.getMessageId()));
+
+        if (role != null)
+            event.getGuild().removeRoleFromMember(event.getUserId(), (role)).queue();
+    }
+
+    public String getRoleId(MessageReaction.ReactionEmote emote, String messageId) {
         String reactionId;
         String roleId;
-        Role role;
 
-        if (event.getReactionEmote().isEmoji())
-            reactionId = ("U+" + Integer.toHexString(event.getReactionEmote().getEmoji().codePointAt(0)));
+        if (emote.isEmoji())
+            reactionId = ("U+" + Integer.toHexString(emote.getEmoji().codePointAt(0)));
         else
-            reactionId = event.getReactionEmote().getId();
-
-        roleId = dbAdapter.getReactionRole(event.getMessageId(), reactionId);
+            reactionId = emote.getId();
+        roleId = dbAdapter.getReactionRole(messageId, reactionId);
         if (roleId != null) {
-            role = event.getGuild().getRoleById(roleId);
-            if (role != null)
-                event.getGuild().removeRoleFromMember(event.getUserId(), (role)).queue();
+            return dbAdapter.getReactionRole(messageId, reactionId);
         }
+        return null;
     }
 
 }
