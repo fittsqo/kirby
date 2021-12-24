@@ -43,10 +43,7 @@ public class GuildMessageReactionListener extends ListenerAdapter {
         else
             reactionId = emote.getId();
         roleId = dbAdapter.getReactionRole(messageId, reactionId);
-        if (roleId != null) {
-            return dbAdapter.getReactionRole(messageId, reactionId);
-        }
-        return null;
+        return roleId;
     }
 
 }
